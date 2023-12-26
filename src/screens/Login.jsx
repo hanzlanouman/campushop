@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
 } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '../hooks/useAuth';
@@ -72,9 +73,14 @@ const Login = () => {
             />
           </View>
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText} disabled={loading}>
-              Login
-            </Text>
+            {
+              // If loading is true, show a spinner, otherwise show Login text
+              loading ? (
+                <ActivityIndicator size='small' color='white' />
+              ) : (
+                <Text style={styles.loginButtonText}>Login</Text>
+              )
+            }
           </TouchableOpacity>
           <Text style={styles.orText}>OR</Text>
           <TouchableOpacity style={styles.googleSignInButton}>

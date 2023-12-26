@@ -12,8 +12,10 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import useFirestore from '../hooks/useFirestore';
+import { Ionicons } from '@expo/vector-icons';
 
 const NewAdForm = () => {
+  const { createNewAd } = useFirestore();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -81,16 +83,21 @@ const NewAdForm = () => {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    if (validateForm()) {
+    if (true) {
       console.log('Form Data:', formData);
-      createAd(formData);
+      createNewAd(formData);
       // Proceed with form submission logic
     }
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 40 }}
+    >
       {/* Title Input */}
+      <Text style={styles.headerText}>Create New Ad</Text>
       <FormInput
         label='Title'
         value={formData.title}
@@ -123,7 +130,7 @@ const NewAdForm = () => {
         error={errors.category}
         onValueChange={(itemValue) => handleInputChange('category', itemValue)}
         items={[
-          { label: 'Select Category', value: '' }, // Default option
+          // { label: 'Select Category', value: '' }, // Default option
           { label: 'Electronics', value: 'electronics' },
           { label: 'Books', value: 'books' },
           { label: 'Clothing', value: 'clothing' },
@@ -132,11 +139,17 @@ const NewAdForm = () => {
       />
 
       {/* Condition Input */}
-      <FormInput
+      <FormPicker
         label='Condition'
-        value={formData.condition}
+        selectedValue={formData.condition}
         error={errors.condition}
-        onChangeText={(text) => handleInputChange('condition', text)}
+        onValueChange={(itemValue) => handleInputChange('condition', itemValue)}
+        items={[
+          // { label: 'Select Condition', value: '' }, // Default option
+          { label: 'New', value: 'new' },
+          { label: 'Like New', value: 'likeNew' },
+          { label: 'Used', value: 'used' },
+        ]}
       />
 
       {/* Location Input */}
@@ -146,31 +159,43 @@ const NewAdForm = () => {
         error={errors.location}
         onChangeText={(text) => handleInputChange('location', text)}
       />
+      <Text style={styles.label}>
+        Add product images{' '}
+        {errors.images && <Text style={styles.required}>*</Text>}
+      </Text>
+      <Text style={{ marginBottom: 10 }}>
+        {formData.images.length} / 5 Selected
+      </Text>
 
       {/* Image Picker */}
-      <TouchableOpacity style={styles.button} onPress={handleImagePick}>
-        <Text style={styles.buttonText}>Pick Images</Text>
-      </TouchableOpacity>
       {errors.images && <Text style={styles.errorText}>{errors.images}</Text>}
       <View style={styles.imagePreviewContainer}>
         {formData.images.map((image, index) => (
-          <Image
-            key={index}
-            source={{ uri: image }}
-            style={styles.imagePreview}
-          />
+          <View key={index} style={styles.imagePreviewItem}>
+            <Image source={{ uri: image }} style={styles.imagePreview} />
+            <Button
+              title='Remove'
+              onPress={() =>
+                setFormData({
+                  ...formData,
+                  images: formData.images.filter((img) => img !== image),
+                })
+              }
+            />
+          </View>
         ))}
       </View>
 
-      <View style={styles.imagePreviewContainer}>
-        {formData.images.map((imageUri, index) => (
-          <Image
-            key={index}
-            source={{ uri: imageUri }} // Correctly reference the URI
-            style={styles.imagePreview}
-          />
-        ))}
-      </View>
+      <TouchableOpacity style={styles.button} onPress={handleImagePick}>
+        {
+          // If there are no images selected, display 'Select Images', otherwise display 'Add More Images' until the max number of images is reached 5
+          formData.images.length === 0 ? (
+            <Text style={styles.buttonText}>Select Images</Text>
+          ) : formData.images.length < 5 ? (
+            <Text style={styles.buttonText}>Add More Images</Text>
+          ) : null
+        }
+      </TouchableOpacity>
 
       {/* Submit Button */}
       <Button title='Submit Ad' onPress={handleSubmit} />
@@ -205,7 +230,15 @@ const FormPicker = ({ label, error, items, ...props }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    marginTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  headerText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   formControl: {
     marginBottom: 15,
@@ -213,6 +246,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 5,
     fontSize: 16,
+    fontWeight: 'bold',
   },
   input: {
     borderWidth: 1,
@@ -230,7 +264,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   buttonText: {
     color: 'white',
@@ -238,7 +272,13 @@ const styles = StyleSheet.create({
   },
   imagePreviewContainer: {
     flexDirection: 'row',
-    marginBottom: 15,
+    flexWrap: 'wrap',
+  },
+  imagePreviewItem: {
+    flexDirection: 'column',
+    marginVertical: 20,
+    marginHorizontal: 10,
+    width: 100,
   },
   imagePreview: {
     width: 100,
@@ -255,16 +295,6 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 14,
     marginTop: 5,
-  },
-
-  imagePreviewContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
-  },
-  imagePreview: {
-    width: 100,
-    height: 100,
-    marginRight: 10,
   },
 });
 

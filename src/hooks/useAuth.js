@@ -1,50 +1,62 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { auth } from '../config/firebase.config';
+import useFirestore from './useFirestore';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth';
-import useFirestore from './useFirestore';
+import { AuthContext } from '../contexts/AuthContext';
 import { Alert } from 'react-native';
 
 const useAuth = () => {
   const [user, setUser] = useState(null);
+  const { currentUser, setCurrentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const { setUserProfile } = useFirestore();
-  const { userExists } = useFirestore();
-  const [error, setError] = useState(null);
+  const { setUserProfile, getUserProfile } = useFirestore();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-
-        setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userProfile = await getUserProfile(user.uid);
+        setCurrentUser({ ...user, ...userProfile }); // Use setCurrentUser
       } else {
-        setUser(undefined);
-
-        setLoading(false);
+        setCurrentUser(null); // Use setCurrentUser
       }
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
   const signIn = async (email, password) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      const userProfile = await getUserProfile(auth.currentUser.uid);
+      setCurrentUser({ ...auth.currentUser, ...userProfile });
+    } catch (error) {
+      console.log('uh oh');
+      console.log(error.message);
+      Alert.alert('Sign In Error', error.message);
+    }
+    setLoading(false);
   };
 
   const signUp = async (email, password, data) => {
-    if (!(await userExists(data.username))) {
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        await setUserProfile(auth.currentUser.uid, data);
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      Alert.alert('Username already exists');
+    console.log('sign up hit');
+    console.log(data);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      delete data.password; // Don't store password in the user profile
+      await setUserProfile(userCredential.user.uid, data);
+      setCurrentUser({ ...userCredential.user, ...data }); // Update currentUser
+    } catch (error) {
+      Alert.alert('Sign Up Error', error.message);
     }
   };
 
@@ -56,37 +68,11 @@ const useAuth = () => {
       console.error('Error signing out: ', error);
       // Handle error (e.g., show an error message to the user)
     }
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
   };
-
-  //Google Auth Sign in
-
-  //   const signInWithGoogle = async () => {
-  //     try {
-  //       // First, the user signs in with Google
-  //       await GoogleSignin.hasPlayServices();
-  //       const { idToken } = await GoogleSignin.signIn();
-
-  //       // Then, use the idToken to create a Firebase credential
-  //       const googleCredential = GoogleAuthProvider.credential(idToken);
-
-  //       // Finally, sign in to Firebase with the Google credential
-  //       const result = await signInWithCredential(auth, googleCredential);
-  //       const newUser = result.user;
-
-  //       if (result.additionalUserInfo.isNewUser) {
-  //         await setUserProfile(newUser.uid, {
-  //           email: newUser.email,
-  //           username: newUser.displayName,
-  //           // Add other user data you want to store in Firestore
-  //         });
-  //       }
-
-  //       setUser(newUser);
-  //     } catch (error) {
-  //       console.error('Google sign-in error: ', error);
-  //     }
-  //   };
-  return { user, loading, signIn, signUp, signOutUser };
+  return { user, loading, signIn, signUp, signOutUser, currentUser };
 };
 
 export default useAuth;

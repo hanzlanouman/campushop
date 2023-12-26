@@ -1,38 +1,39 @@
-import { useEffect, useState } from 'react';
 import { firestore } from '../config/firebase.config';
 import {
+  getDoc,
+  deleteDoc,
+  getDocs,
+  where,
+  query,
+  collection,
   doc,
   setDoc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  deleteDoc,
 } from 'firebase/firestore';
-import { Alert } from 'react-native';
-
+import { useState } from 'react';
+import useStorage from './useStorage';
 const useFirestore = () => {
+  const { uploadAdImages } = useStorage();
+  const [loading, setLoading] = useState(false);
   const setUserProfile = async (userId, profileData) => {
-    const userProfileRef = doc(firestore, 'userProfiles', userId);
+    console.log('set user profile');
+    console.log(profileData);
+    const userProfileRef = doc(firestore, 'users', userId);
     await setDoc(userProfileRef, profileData);
   };
 
   const getUserProfile = async (userId) => {
-    const userProfileRef = doc(firestore, 'userProfiles', userId);
+    const userProfileRef = doc(firestore, 'users', userId);
     const docSnap = await getDoc(userProfileRef);
-    return docSnap.exists() ? docSnap.data() : null;
+    const data = docSnap.data();
+    return docSnap.exists() ? data : null;
   };
-
   const deleteUserProfile = async (userId) => {
-    const userProfileRef = doc(firestore, 'userProfiles', userId);
+    const userProfileRef = doc(firestore, 'users', userId);
     await deleteDoc(userProfileRef);
   };
-
-  // Example function to query user profiles based on a specific condition
-  const queryUserProfiles = async (fieldName, value) => {
+  const queryUserProfile = async (fieldName, value) => {
     const q = query(
-      collection(firestore, 'userProfiles'),
+      collection(firestore, 'users'),
       where(fieldName, '==', value)
     );
     const querySnapshot = await getDocs(q);
@@ -41,68 +42,50 @@ const useFirestore = () => {
 
   const emailExists = async (email) => {
     console.log('API HIT');
+    setLoading(true);
     const q = query(
-      collection(firestore, 'userProfiles'),
+      collection(firestore, 'users'),
       where('email', '==', email)
     );
+
     const querySnapshot = await getDocs(q);
+    setLoading(false);
     return querySnapshot.docs.length > 0 ? true : false;
   };
 
-  const userExists = async (username) => {
+  const userExsists = async (username) => {
+    setLoading(true);
     const q = query(
-      collection(firestore, 'userProfiles'),
+      collection(firestore, 'users'),
       where('username', '==', username)
     );
     const querySnapshot = await getDocs(q);
-    console.log('API Hit');
+    console.log('API HIT');
+    setLoading(false);
     return querySnapshot.docs.length > 0 ? true : false;
   };
 
-  // Additional Firestore operations can be added here as needed
+  const createNewAd = async (adData) => {
+    const images = await uploadAdImages(adData.images);
 
-  const createAd = async (userId, adData) => {
-    // Create a new document in the 'ads' collection
-    const adRef = doc(collection(firestore, 'ads'));
-    await setDoc(adRef, {
+    const adRef = collection(firestore, 'ads');
+    const newAd = await setDoc(doc(adRef), {
       ...adData,
-      userId, // Store reference to the user
-      createdAt: new Date(), // Store the creation date
+      images: images,
     });
+    return newAd;
   };
 
-  const getAdsByUser = async (userId) => {
-    // Query ads created by the specific user
-    const q = query(
-      collection(firestore, 'ads'),
-      where('userId', '==', userId)
-    );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  };
-
-  const updateAd = async (adId, updatedData) => {
-    // Update an existing ad
-    const adRef = doc(firestore, 'ads', adId);
-    await setDoc(adRef, updatedData, { merge: true });
-  };
-
-  const deleteAd = async (adId) => {
-    // Delete an ad
-    const adRef = doc(firestore, 'ads', adId);
-    await deleteDoc(adRef);
-  };
   return {
     setUserProfile,
     getUserProfile,
     deleteUserProfile,
-    queryUserProfiles,
+    queryUserProfile,
     emailExists,
-    userExists,
-    createAd,
-    getAdsByUser,
-    updateAd,
-    deleteAd,
+    userExsists,
+    createNewAd,
+
+    loading,
   };
 };
 

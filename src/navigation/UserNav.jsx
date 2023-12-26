@@ -7,83 +7,83 @@ import Home from '../screens/Home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements';
 import NewAdForm from '../screens/NewAdForm';
+import Profile from '../screens/Profile';
+import { Ionicons } from '@expo/vector-icons';
+import AdNav from './AdNav';
+import SettingsNav from './SettingsNav';
+
 const Tab = createBottomTabNavigator();
 const UserNav = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        initialRouteName='Home'
-        screenOptions={{
+        initialRouteName='HomeScreen'
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'HomeScreen') {
+              iconName = focused ? 'ios-home' : 'ios-home-outline';
+            } else if (route.name === 'Chat') {
+              iconName = focused
+                ? 'ios-chatbubbles'
+                : 'ios-chatbubbles-outline';
+            } else if (route.name === 'Sell') {
+              iconName = focused ? 'ios-add-circle' : 'ios-add-circle-outline';
+            } else if (route.name === 'My Ads') {
+              iconName = focused ? 'ios-list' : 'ios-list-outline';
+            } else if (route.name === 'Settings') {
+              iconName = focused ? 'ios-settings' : 'ios-settings-outline';
+            }
+
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={30} color={color} />;
+          },
+          tabBarActiveTintColor: '#7a29ff',
+          tabBarInactiveTintColor: '#444',
+          tabBarActiveBackgroundColor: '#e9e9e9',
+          tabBarShowLabel: false,
+          // Dont show header
+          headerShown: false,
+
           tabBarStyle: {
-            backgroundColor: '#fff',
-            borderTopWidth: 0,
-            shadowOffset: { width: 5, height: 3 },
-            shadowColor: '#000',
-            shadowOpacity: 0.5,
-            elevation: 5,
-            height: 65,
+            height: 70,
           },
-          tabBarLabelStyle: {
-            fontSize: 14,
-            fontWeight: 'bold',
-          },
-          tabBarActiveTintColor: '#123',
-          tabBarInactiveTintColor: '#666',
-        }}
+        })}
       >
         <Tab.Screen
-          name='Home'
-          component={Home}
+          name='HomeScreen'
+          component={AdNav}
           options={{
             headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <Icon name='home' type='font-awesome' color={color} size={40} />
-            ),
           }}
         />
         <Tab.Screen
           name='Chat'
-          component={Home}
+          component={Profile}
           options={{
             headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <Icon
-                name='wechat'
-                type='font-awesome'
-                color={color}
-                size={size}
-              />
-            ),
           }}
         />
         <Tab.Screen
           name='Sell'
-          component={NewAdForm}
+          component={Profile}
           options={{
             headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <Icon name='plus' type='font-awesome' color={color} size={45} />
-            ),
           }}
         />
         <Tab.Screen
           name='My Ads'
-          component={Home}
+          component={Profile}
           options={{
             headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <Icon name='list' type='font-awesome' color={color} size={35} />
-            ),
           }}
         />
         <Tab.Screen
-          name='Profile'
-          component={Home}
+          name='Settings'
+          component={SettingsNav}
           options={{
             headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <Icon name='user' type='font-awesome' color={color} size={size} />
-            ),
           }}
         />
       </Tab.Navigator>
