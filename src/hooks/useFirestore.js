@@ -8,9 +8,11 @@ import {
   collection,
   doc,
   setDoc,
+  orderBy,
 } from 'firebase/firestore';
 import { useState } from 'react';
 import useStorage from './useStorage';
+import { auth } from '../config/firebase.config';
 const useFirestore = () => {
   const { uploadAdImages } = useStorage();
   const [loading, setLoading] = useState(false);
@@ -69,11 +71,35 @@ const useFirestore = () => {
     const images = await uploadAdImages(adData.images);
 
     const adRef = collection(firestore, 'ads');
-    const newAd = await setDoc(doc(adRef), {
+    await setDoc(doc(adRef), {
       ...adData,
-      images: images,
+      createdAt: new Date(), // Adding the current timestamp
+      createdBy: auth.currentUser.uid,
     });
     return newAd;
+  };
+
+  const getUserAds = async () => {
+    const q = query(
+      collection(firestore, 'ads'),
+      where('createdBy', '==', auth.currentUser.uid)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id, // Including the document ID
+      ...doc.data(),
+    }));
+  };
+
+  const getAllAds = async () => {
+    // Assuming each ad document has a 'createdAt' or 'timestamp' field
+    const q = query(collection(firestore, 'ads'), orderBy('createdAt', 'desc'));
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id, // Including the document ID
+      ...doc.data(),
+    }));
   };
 
   return {
@@ -84,6 +110,8 @@ const useFirestore = () => {
     emailExists,
     userExsists,
     createNewAd,
+    getAllAds,
+    getUserAds,
 
     loading,
   };

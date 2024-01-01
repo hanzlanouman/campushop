@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Pressable,
 } from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from 'react-native-modal';
+import { useNavigation } from '@react-navigation/native';
 
-const AdDetails = ({ route }) => {
+const UserAdDetails = ({ route }) => {
   const { ad } = route.params;
+  const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const imageScrollViewRef = useRef(null);
@@ -44,25 +47,18 @@ const AdDetails = ({ route }) => {
       </View>
 
       <View style={styles.detailsContainer}>
+        <Text>This is your ad</Text>
         <Text style={styles.title}>{ad.title}</Text>
         <Divider style={styles.divider} />
-        <Text style={styles.price}>{`Rs. ${ad.price}`}</Text>
+        <Text style={styles.description}>{ad.description}</Text>
+        <Text style={styles.price}>{`Price: ${ad.price}`}</Text>
         <Text style={styles.location}>{`Location: ${ad.location}`}</Text>
-
-        <Text style={styles.description}>
-          {ad.description} Lorem ipsum, dolor sit amet consectetur adipisicing
-          elit. Quam sapiente praesentium enim qui sint, sequi at dolore ex
-          ducimus esse ipsa similique id officiis cumque quibusdam in laborum,
-          harum, inventore consequuntur! Aperiam veritatis velit dignissimos
-          quibusdam delectus nihil quas eos ad a voluptates dolorem repellat,
-          libero iste veniam exercitationem. Repellendus commodi recusandae
-          libero deserunt fuga, dicta totam et beatae cupiditate sequi, nobis
-          quaerat culpa. Animi tempora neque eius quo numquam ea, mollitia hic
-          nihil modi. Dicta maiores architecto deleniti at quia eligendi,
-          explicabo illo nemo hic dolorum, placeat exercitationem! Laboriosam
-          quae, molestias necessitatibus quas illum pariatur corrupti vero
-          doloribus maiores?
-        </Text>
+        <Pressable
+          onPress={() => navigation.navigate('EditAd', { ad })}
+          style={styles.EditBtn}
+        >
+          <Text style={styles.EditTxt}>Edit Ad</Text>
+        </Pressable>
       </View>
 
       <Modal
@@ -111,14 +107,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   price: {
-    fontSize: 25,
+    fontSize: 20,
     color: 'green',
     marginTop: 10,
-    fontWeight: 'bold',
   },
   location: {
     fontSize: 18,
-    color: '#222',
+    color: '#333',
     marginTop: 10,
   },
   modalContainer: {
@@ -148,4 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AdDetails;
+export default UserAdDetails;

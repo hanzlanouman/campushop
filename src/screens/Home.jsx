@@ -1,92 +1,101 @@
 // src/components/Home.js
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Pressable,
+  RefreshControl,
+} from 'react-native';
 import useAuth from '../hooks/useAuth';
-import { Card, Searchbar } from 'react-native-paper';
+import { ActivityIndicator, Card, Searchbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar, Title, Paragraph } from 'react-native-paper';
 import { FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import useFirestore from '../hooks/useFirestore';
+import { useCallback } from 'react';
+import CategoryPanel from './categories/CategoryPanel';
 
 const Home = () => {
-  const [ads, setAds] = useState([
-    {
-      id: '1',
-      title: 'iPhone 11 Pro',
-      description: 'Brand new iPhone 12 Pro Max',
-      price: 2000,
-      images: [
-        'https://images.unsplash.com/photo-1606784887872-4d4b7e9a2b0f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aXBob25lJTIwMTJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
-      ],
-    },
-    {
-      id: '2',
-      title: 'iPhone 12 Pro Max',
-      description: 'Brand new iPhone 12 Pro Max',
-      price: 2000,
-      images: [
-        'https://images.unsplash.com/photo-1606784887872-4d4b7e9a2b0f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aXBob25lJTIwMTJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
-      ],
-    },
-    {
-      id: '3',
-      title: 'iPhone X Pro Max',
-      description: 'Brand new iPhone 12 Pro Max',
-      price: 2000,
-      images: [
-        'https://images.unsplash.com/photo-1606784887872-4d4b7e9a2b0f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aXBob25lJTIwMTJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
-      ],
-    },
-    {
-      id: '4',
-      title: 'iPhone 14 Pro Max',
-      description: 'Brand new iPhone 12 Pro Max',
-      price: 2000,
-      images: [
-        // add picsum images
-        'https://images.unsplash.com/photo-1606784887872-4d4b7e9a2jb0f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aXBob25lJTIwMTJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
-      ],
-    },
-    {
-      id: '5',
-      title: 'iPhone 13 Pro Max',
-      description: 'Brand new iPhone 12 Pro Max',
-      price: 2000,
-      images: [
-        'https://images.unsplash.com/photo-1606784887872-4d4b7e9a2b0f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aXBob25lJTIwMTJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80',
-      ],
-    },
-  ]);
+  const [ads, setAds] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const { getAllAds, loading } = useFirestore();
+  const { currentUser } = useAuth();
 
-  const filterSearch = (text) => {
-    const newData = ads.filter((item) => {
-      const itemData = item.title.toUpperCase();
-      const textData = text.toUpperCase();
-      return itemData.indexOf(textData) > -1;
-    });
-    setAds(newData);
+  useEffect(() => {
+    fetchAds();
+  }, []);
+
+  const fetchAds = useCallback(async () => {
+    setRefreshing(true);
+    const fetchedAds = await getAllAds();
+    setAds(fetchedAds);
+    setRefreshing(false);
+  }, [getAllAds]);
+
+  const onRefresh = useCallback(() => {
+    fetchAds();
+  }, [fetchAds]);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (!query) {
+      fetchAds();
+    } else {
+      const filteredAds = ads.filter((ad) =>
+        ad.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setAds(filteredAds);
+    }
   };
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size='large' />
+      </View>
+    );
+  }
+
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.topBar}>
         <Searchbar
           placeholder='Search Ads'
           style={styles.searchbar}
           icon={() => <Ionicons name='ios-search' size={25} color='#7a29ff' />}
-          onIconPress={() => console.log('Pressed')}
-          rippleColor={'#7a29ff'}
-          elevation={3}
-          inputStyle={{ fontSize: 18 }}
-          onChangeText={(text) => filterSearch(text)}
+          onChangeText={handleSearch}
         />
+        <Pressable onPress={() => navigation.navigate('Profile')}>
+          <Avatar.Image
+            size={50}
+            source={{ uri: currentUser?.profileImageUrl || undefined }}
+          />
+        </Pressable>
       </View>
       <FlatList
+        ListHeaderComponent={
+          <>
+            <CategoryPanel />
+            <Text style={styles.headerText}>Latest Ads</Text>
+          </>
+        }
         data={ads}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <AdCard ad={item} />}
+        renderItem={({ item }) => (
+          <View style={styles.adCard}>
+            <AdCard ad={item} />
+          </View>
+        )}
         style={styles.adsList}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -116,11 +125,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     paddingTop: 40,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 10,
   },
   searchbar: {
     borderRadius: 50,
+    flex: 1,
+    marginRight: 10,
   },
   adCard: {
     marginVertical: 10,
@@ -131,6 +147,14 @@ const styles = StyleSheet.create({
   },
   adDescription: {
     fontSize: 16,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   adPrice: {
     fontSize: 16,

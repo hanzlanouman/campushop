@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { List } from 'react-native-paper';
+import { List, ToggleButton } from 'react-native-paper';
 import { auth } from '../config/firebase.config';
 import { useNavigation } from '@react-navigation/native';
 const Settings = () => {
@@ -17,6 +17,19 @@ const Settings = () => {
         title='Change Password'
         left={(props) => <List.Icon {...props} icon='lock' />}
         onPress={() => navigation.navigate('ChangePassword')}
+      />
+      <List.Item
+        title='Dark Mode'
+        left={(props) => <List.Icon {...props} icon='theme-light-dark' />}
+        right={(props) => (
+          // Make a toggle button like the iphone toggle button actual button
+          <ToggleButton
+            {...props}
+            icon='theme-light-dark'
+            value='dark'
+            onPress={() => console.log('pressed')}
+          />
+        )}
       />
       <List.Item
         title='Logout'

@@ -11,6 +11,9 @@ import Profile from '../screens/Profile';
 import { Ionicons } from '@expo/vector-icons';
 import AdNav from './AdNav';
 import SettingsNav from './SettingsNav';
+import UserAdsNav from './UserAdsNav';
+import Inbox from '../screens/chats/Inbox';
+import ChatNav from './ChatNav';
 
 const Tab = createBottomTabNavigator();
 const UserNav = () => {
@@ -60,21 +63,21 @@ const UserNav = () => {
         />
         <Tab.Screen
           name='Chat'
-          component={Profile}
+          component={ChatNav}
           options={{
             headerShown: false,
           }}
         />
         <Tab.Screen
           name='Sell'
-          component={Profile}
+          component={NewAdForm}
           options={{
             headerShown: false,
           }}
         />
         <Tab.Screen
           name='My Ads'
-          component={Profile}
+          component={UserAdsNav}
           options={{
             headerShown: false,
           }}

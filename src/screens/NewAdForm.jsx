@@ -83,8 +83,9 @@ const NewAdForm = () => {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    if (true) {
+    if (validateForm()) {
       console.log('Form Data:', formData);
+      console.log(formData);
       createNewAd(formData);
       // Proceed with form submission logic
     }
@@ -130,7 +131,7 @@ const NewAdForm = () => {
         error={errors.category}
         onValueChange={(itemValue) => handleInputChange('category', itemValue)}
         items={[
-          // { label: 'Select Category', value: '' }, // Default option
+          { label: 'Select Category', value: '' }, // Default option
           { label: 'Electronics', value: 'electronics' },
           { label: 'Books', value: 'books' },
           { label: 'Clothing', value: 'clothing' },
@@ -145,7 +146,7 @@ const NewAdForm = () => {
         error={errors.condition}
         onValueChange={(itemValue) => handleInputChange('condition', itemValue)}
         items={[
-          // { label: 'Select Condition', value: '' }, // Default option
+          { label: 'Select Condition', value: '' }, // Default option
           { label: 'New', value: 'new' },
           { label: 'Like New', value: 'likeNew' },
           { label: 'Used', value: 'used' },
