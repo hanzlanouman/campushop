@@ -150,10 +150,13 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 1,
+    backgroundColor: 'white',
+    height: '100%',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
+    padding: 20,
     backgroundColor: 'white',
   },
   headerText: {

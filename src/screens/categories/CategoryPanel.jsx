@@ -8,39 +8,46 @@ const CategoryPanel = () => {
   const categories = [
     {
       id: 1,
-      name: 'Phones',
+      title: 'Phones',
+      name: 'phones',
       icon: 'phone-portrait-outline',
     },
     {
       id: 2,
-      name: 'Laptops',
+      title: 'Laptops',
+      name: 'laptops',
       icon: 'laptop-outline',
     },
     {
       id: 3,
+      title: 'Vehicles',
       name: 'Vehicles',
       icon: 'car-outline',
     },
     {
       id: 4,
-      name: 'Books',
+      title: 'Books',
+      name: 'books',
       icon: 'book-outline',
     },
     {
       id: 5,
-      name: 'Gadgets',
+      title: 'Gadgets',
+      name: 'gadgets',
       icon: 'watch-outline',
     },
     {
       id: 6,
-      name: 'Clothes',
+      title: 'Clothes',
+      name: 'clothes',
       icon: 'shirt-outline',
     },
   ];
 
   const handlePress = (categoryName) => {
     console.log(categoryName);
-    navigation.navigate('CategorizedAds', { categoryName });
+    // Navigate with data to another navigator useRoute
+    navigation.navigate('CategorizedAds', { category: categoryName });
     // Here you can handle the press event, e.g., navigate to a category-specific page
   };
 

@@ -113,7 +113,7 @@ const AdCard = ({ ad }) => {
         <Card.Content>
           <Title>{ad.title}</Title>
           <Paragraph>{ad.description}</Paragraph>
-          <Paragraph style={styles.adPrice}>${ad.price}</Paragraph>
+          <Paragraph style={styles.adPrice}>Rs. {ad.price}</Paragraph>
         </Card.Content>
         <Card.Actions></Card.Actions>
       </Card>

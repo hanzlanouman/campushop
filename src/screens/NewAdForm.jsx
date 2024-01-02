@@ -15,9 +15,10 @@ import * as ImagePicker from 'expo-image-picker';
 import useFirestore from '../hooks/useFirestore';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../config/firebase.config';
+import { ActivityIndicator } from 'react-native-paper';
 
 const NewAdForm = () => {
-  const { createNewAd } = useFirestore();
+  const { createNewAd, loading } = useFirestore();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -203,7 +204,11 @@ const NewAdForm = () => {
 
       {/* Submit Button */}
       <Pressable style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
+        {loading ? (
+          <ActivityIndicator size='large' color='white' />
+        ) : (
+          <Text style={styles.buttonText}>Submit</Text>
+        )}
       </Pressable>
     </ScrollView>
   );

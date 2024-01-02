@@ -69,6 +69,7 @@ const useFirestore = () => {
   };
 
   const createNewAd = async (adData) => {
+    setLoading(true);
     const images = await uploadAdImages(adData.images);
 
     const adRef = collection(firestore, 'ads');
@@ -77,6 +78,7 @@ const useFirestore = () => {
       createdAt: new Date(), // Adding the current timestamp
       createdBy: auth.currentUser.uid,
     });
+    setLoading(false);
     return newAd;
   };
 
@@ -103,6 +105,20 @@ const useFirestore = () => {
     }));
   };
 
+  getCategorizedAds = async (category) => {
+    setLoading(true);
+    const q = query(
+      collection(firestore, 'ads'),
+      where('category', '==', category)
+    );
+    const querySnapshot = await getDocs(q);
+    setLoading(false);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id, // Including the document ID
+      ...doc.data(),
+    }));
+  };
+
   const deleteAd = async (adId) => {
     setLoading(true);
     const adRef = doc(firestore, 'ads', adId);
@@ -122,6 +138,7 @@ const useFirestore = () => {
     getAllAds,
     getUserAds,
     deleteAd,
+    getCategorizedAds,
 
     loading,
   };

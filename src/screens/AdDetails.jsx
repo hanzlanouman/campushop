@@ -97,6 +97,8 @@ const AdDetails = ({ navigation, route }) => {
                   onPress={async () => {
                     // Delete the ad
                     await deleteAd(ad.id);
+                    // Go back to home screen
+                    navigation.goBack();
                   }}
                 >
                   <Ionicons name='trash' size={30} color='#7a29ff' />

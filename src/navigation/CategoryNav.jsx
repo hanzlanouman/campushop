@@ -6,7 +6,7 @@ import Chat from '../screens/chats/Chat';
 import AdDetails from '../screens/AdDetails';
 
 const CategoryStack = createStackNavigator();
-const CategoryNav = () => {
+const CategoryNav = ({ route }) => {
   return (
     <CategoryStack.Navigator
       initialRouteName='CategoryAds'
@@ -14,7 +14,12 @@ const CategoryNav = () => {
         headerShown: false,
       }}
     >
-      <CategoryStack.Screen name='CategoryAds' component={CategoryAdList} />
+      <CategoryStack.Screen
+        name='CategoryAds'
+        component={CategoryAdList}
+        // set params
+        initialParams={{ category: route.params?.category }}
+      />
       <CategoryStack.Screen name='Chat' component={Chat} />
       <CategoryStack.Screen name='AdDetails' component={AdDetails} />
     </CategoryStack.Navigator>
