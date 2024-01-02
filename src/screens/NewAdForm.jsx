@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Button,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   Image,
+  Pressable,
 } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import useFirestore from '../hooks/useFirestore';
@@ -134,9 +135,12 @@ const NewAdForm = () => {
         onValueChange={(itemValue) => handleInputChange('category', itemValue)}
         items={[
           { label: 'Select Category', value: '' }, // Default option
-          { label: 'Electronics', value: 'electronics' },
+          { label: 'Phones', value: 'phones' },
+          { label: 'Laptops', value: 'books' },
+          { label: 'Vehicles', value: 'vehicles' },
           { label: 'Books', value: 'books' },
-          { label: 'Clothing', value: 'clothing' },
+          { label: 'Gadgets', value: 'gadgets' },
+          { label: 'Clothes', value: 'clothes' },
           // Add other categories here
         ]}
       />
@@ -190,28 +194,34 @@ const NewAdForm = () => {
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleImagePick}>
-        {
-          // If there are no images selected, display 'Select Images', otherwise display 'Add More Images' until the max number of images is reached 5
-          formData.images.length === 0 ? (
-            <Text style={styles.buttonText}>Select Images</Text>
-          ) : formData.images.length < 5 ? (
-            <Text style={styles.buttonText}>Add More Images</Text>
-          ) : null
-        }
+        {formData.images.length === 0 ? (
+          <Text style={styles.buttonText}>Select Images</Text>
+        ) : formData.images.length < 5 ? (
+          <Text style={styles.buttonText}>Add More Images</Text>
+        ) : null}
       </TouchableOpacity>
 
       {/* Submit Button */}
-      <Button title='Submit Ad' onPress={handleSubmit} />
+      <Pressable style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Submit</Text>
+      </Pressable>
     </ScrollView>
   );
 };
 
 const FormInput = ({ label, error, ...props }) => (
   <View style={styles.formControl}>
-    <Text style={styles.label}>
-      {label} {error && <Text style={styles.required}>*</Text>}
-    </Text>
-    <TextInput style={[styles.input, error && styles.errorInput]} {...props} />
+    {error && (
+      <Text style={styles.label}>
+        {error && <Text style={styles.required}>*</Text>}
+      </Text>
+    )}
+    <TextInput
+      style={[styles.input, error && styles.errorInput]}
+      {...props}
+      label={label}
+      mode='outlined'
+    />
     {error && <Text style={styles.errorText}>{error}</Text>}
   </View>
 );
@@ -244,26 +254,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   formControl: {
-    marginBottom: 15,
+    marginBottom: 8,
   },
   label: {
-    marginBottom: 5,
-    fontSize: 16,
+    fontSize: 18,
+    // marginTop: 10,
     fontWeight: 'bold',
   },
   input: {
-    borderWidth: 1,
     borderColor: 'gray',
-    borderRadius: 5,
-    padding: 10,
+    marginBottom: 5,
   },
   picker: {
     borderWidth: 1,
     borderColor: 'gray',
+    borderRadius: 10,
     borderRadius: 5,
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: '#7a29aa',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -271,7 +280,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
   },
   imagePreviewContainer: {
     flexDirection: 'row',
