@@ -7,19 +7,25 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Pressable,
 } from 'react-native';
-import { Divider } from 'react-native-paper';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 import Modal from 'react-native-modal';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { auth } from '../config/firebase.config';
+import useFirestore from '../hooks/useFirestore';
 
-const AdDetails = ({ route }) => {
+const AdDetails = ({ navigation, route }) => {
   const { ad } = route.params;
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const imageScrollViewRef = useRef(null);
+  const { deleteAd, loading } = useFirestore();
+  console.log(ad.postedBy);
 
   const screenWidth = Dimensions.get('window').width;
-
-  return (
+  console.log(loading);
+  return !loading ? (
     <ScrollView style={styles.container}>
       <View style={styles.imageContainer}>
         <ScrollView
@@ -42,9 +48,63 @@ const AdDetails = ({ route }) => {
           ))}
         </ScrollView>
       </View>
-
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{ad.title}</Text>
+        <Divider style={styles.divider} />
+
+        {
+          // If the user is the owner of the ad, dont show the message button
+          ad.postedBy !== auth.currentUser.uid ? (
+            <View style={styles.buttonContainer}>
+              <Pressable style={styles.button}>
+                {/* Icon For Call */}
+                <MaterialIcons name='call' size={35} color='#7a29ff' />
+              </Pressable>
+              <Pressable
+                style={styles.button}
+                onPress={() =>
+                  navigation.navigate('Chat', {
+                    otherUserId: ad.postedBy,
+                    adTitle: ad.title,
+                  })
+                }
+              >
+                {/* Icon For Message */}
+                <Ionicons name='chatbox-ellipses' size={35} color='#7a29ff' />
+              </Pressable>
+            </View>
+          ) : (
+            <>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  marginBottom: 10,
+                }}
+              >
+                You are the owner of this ad
+              </Text>
+              <View style={styles.buttonContainer}>
+                <Pressable
+                  onPress={() => navigation.navigate('EditAd', { ad })}
+                  style={styles.button}
+                >
+                  <Ionicons name='pencil' size={30} color='#7a29ff' />
+                </Pressable>
+                <Pressable
+                  style={styles.button}
+                  onPress={async () => {
+                    // Delete the ad
+                    await deleteAd(ad.id);
+                  }}
+                >
+                  <Ionicons name='trash' size={30} color='#7a29ff' />
+                </Pressable>
+              </View>
+            </>
+          )
+        }
         <Divider style={styles.divider} />
         <Text style={styles.price}>{`Rs. ${ad.price}`}</Text>
         <Text style={styles.location}>{`Location: ${ad.location}`}</Text>
@@ -64,7 +124,6 @@ const AdDetails = ({ route }) => {
           doloribus maiores?
         </Text>
       </View>
-
       <Modal
         visible={isModalVisible}
         transparent
@@ -78,6 +137,8 @@ const AdDetails = ({ route }) => {
         </TouchableOpacity>
       </Modal>
     </ScrollView>
+  ) : (
+    <ActivityIndicator size='large' color='#222' />
   );
 };
 
@@ -103,7 +164,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     backgroundColor: '#000',
-    marginVertical: 10,
+    // marginVertical: 10,
   },
   description: {
     fontSize: 16,
@@ -134,13 +195,16 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+    justifyContent: 'space-around',
+    // marginTop: 10,
   },
   button: {
+    backgroundColor: '#fefefe',
+    flex: 1,
+    alignItems: 'center',
     padding: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 5,
+    // borderRadius: 5,
+    // elevation: 3,
   },
   buttonText: {
     color: 'white',

@@ -1,55 +1,77 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
-import { Divider, Avatar, List } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+// Inbox.js
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import { auth, firestore } from '../../config/firebase.config';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { Ionicons } from '@expo/vector-icons';
 
-const Inbox = () => {
-  const navigation = useNavigation();
-  const messages = [
-    {
-      id: '1',
-      from: 'User1',
-      message: 'This is the first message',
-    },
-    {
-      id: '2',
-      from: 'User 2',
-      message: 'This is the second message',
-    },
-    {
-      id: '3',
-      from: 'User 3',
-      message: 'This is the third message',
-    },
-  ];
+const Inbox = ({ navigation }) => {
+  const [conversations, setConversations] = useState([]);
+
+  useEffect(() => {
+    const currentUserUid = auth.currentUser.uid;
+    const q = query(
+      collection(firestore, 'chats'),
+      where('chatParticipants', 'array-contains', currentUserUid)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const threads = {};
+      snapshot.docs.forEach((doc) => {
+        const messageData = doc.data();
+        const otherUserId = messageData.chatParticipants.find(
+          (id) => id !== currentUserUid
+        );
+        if (otherUserId && !threads[otherUserId]) {
+          threads[otherUserId] = { ...messageData, uid: otherUserId };
+        }
+      });
+      setConversations(Object.values(threads));
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const openChat = (otherUserId) => {
+    navigation.navigate('Chat', { otherUserId });
+  };
 
   return (
     <View style={styles.container}>
-      <Text
-        style={{
-          fontSize: 30,
-          fontWeight: 'bold',
-          marginLeft: 10,
-          marginBottom: 20,
-        }}
-      >
+      <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 20 }}>
         Inbox
       </Text>
       <FlatList
-        data={messages}
+        data={conversations}
+        keyExtractor={(item) => item.uid}
         renderItem={({ item }) => (
-          <Pressable onPress={() => navigation.navigate('Chat', { item })}>
-            <List.Item
-              title={item.from}
-              description={item.message}
-              left={() => <Avatar.Icon size={40} icon='email' />}
-              right={() => <MaterialIcons name='navigate-next' size={24} />}
-            />
-          </Pressable>
+          <View style={styles.item}>
+            <TouchableOpacity
+              onPress={() => openChat(item.uid)}
+              style={styles.itemContainer}
+            >
+              <Ionicons name='mail' size={50} color='#7a29ff' />
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  marginLeft: 10,
+                }}
+              >
+                {item.text || 'Start a conversation'}
+              </Text>
+            </TouchableOpacity>
+          </View>
         )}
-        keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={() => <Divider />}
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 1, backgroundColor: '#ccc' }} />
+        )}
       />
     </View>
   );
@@ -57,21 +79,17 @@ const Inbox = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
-    paddingHorizontal: 10,
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 10,
+    padding: 10,
+    marginTop: 50,
   },
-  messageItem: {
+  item: {
+    marginVertical: 10,
+  },
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  messageText: {
-    marginLeft: 10,
   },
 });
 

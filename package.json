@@ -37,6 +37,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.12.0",
+    "react-native-gifted-chat": "^2.4.0",
     "react-native-image-picker": "^7.0.3",
     "react-native-modal": "^13.0.1",
     "react-native-onboard": "^2.6.0",

@@ -3,6 +3,7 @@ import Home from '../screens/Home';
 import AdDetails from '../screens/AdDetails';
 import Profile from '../screens/Profile';
 import CategoryNav from './CategoryNav';
+import Chat from '../screens/chats/Chat';
 const AdStack = createStackNavigator();
 const AdNav = () => {
   return (
@@ -23,6 +24,7 @@ const AdNav = () => {
       />
       <AdStack.Screen name='Profile' component={Profile} />
       <AdStack.Screen name='CategorizedAds' component={CategoryNav} />
+      <AdStack.Screen name='Chat' component={Chat} />
     </AdStack.Navigator>
   );
 };

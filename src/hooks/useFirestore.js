@@ -13,6 +13,7 @@ import {
 import { useState } from 'react';
 import useStorage from './useStorage';
 import { auth } from '../config/firebase.config';
+import { set } from 'date-fns';
 const useFirestore = () => {
   const { uploadAdImages } = useStorage();
   const [loading, setLoading] = useState(false);
@@ -102,6 +103,14 @@ const useFirestore = () => {
     }));
   };
 
+  const deleteAd = async (adId) => {
+    setLoading(true);
+    const adRef = doc(firestore, 'ads', adId);
+    await deleteDoc(adRef);
+    setLoading(false);
+    return;
+  };
+
   return {
     setUserProfile,
     getUserProfile,
@@ -112,6 +121,7 @@ const useFirestore = () => {
     createNewAd,
     getAllAds,
     getUserAds,
+    deleteAd,
 
     loading,
   };

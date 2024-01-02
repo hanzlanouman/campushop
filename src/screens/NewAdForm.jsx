@@ -13,6 +13,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import useFirestore from '../hooks/useFirestore';
 import { Ionicons } from '@expo/vector-icons';
+import { auth } from '../config/firebase.config';
 
 const NewAdForm = () => {
   const { createNewAd } = useFirestore();
@@ -24,6 +25,7 @@ const NewAdForm = () => {
     images: [],
     condition: '',
     location: '',
+    postedBy: auth.currentUser.uid,
   });
 
   const [errors, setErrors] = useState({});

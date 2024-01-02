@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardImage: {
-    padding: 10,
+    padding: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -38,6 +38,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#555',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
   },
 });
