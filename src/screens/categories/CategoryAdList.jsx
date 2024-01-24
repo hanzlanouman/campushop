@@ -4,6 +4,9 @@ import { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import useFirestore from '../../hooks/useFirestore';
 import { useRoute } from '@react-navigation/native';
+import { Searchbar } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../../Theme/colors';
 
 import AdCard from '../AdCard';
 
@@ -28,8 +31,32 @@ const CategoryAdList = () => {
     fetchAds();
   }, [route.params?.category]);
 
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+
+    if (!query) {
+      fetchAds();
+    } else {
+      const filteredAds = ads.filter((ad) =>
+        ad.title.toLowerCase().includes(query.toLowerCase())
+      );
+
+      setAds(filteredAds);
+    }
+  };
   return (
     <View style={styles.container}>
+      <Searchbar
+        placeholder='Search Ads'
+        style={styles.searchbar}
+        icon={() => (
+          <Ionicons name='ios-search' size={25} color={COLORS.secondary} />
+        )}
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
       <FlatList
         data={ads}
         ListHeaderComponent={() => (

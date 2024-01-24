@@ -3,7 +3,6 @@ import { AuthProvider } from './src/contexts/AuthContext';
 import RootNavigation from './src/navigation';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const App = () => {
   useEffect(() => {
     const checkFirstTimeOpen = async () => {
@@ -24,7 +23,9 @@ const App = () => {
   return (
     <AuthProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <RootNavigation />
+        <RootNavigation
+          
+        />
       </GestureHandlerRootView>
     </AuthProvider>
   );

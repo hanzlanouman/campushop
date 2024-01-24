@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Image,
   KeyboardAvoidingView,
+  Pressable,
 } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, RadioButton } from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '../hooks/useAuth';
+import { COLORS } from '../Theme/colors';
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -44,13 +47,27 @@ const Login = () => {
         keyboardShouldPersistTaps='handled'
       >
         <View style={styles.container}>
-          <Text style={styles.headerText}>CampuShop</Text>
-          <Text style={styles.subHeaderText}>Login</Text>
+          <Image
+            source={require('../../assets/login-2.png')}
+            style={{
+              width: 230,
+              height: 230,
+              alignSelf: 'center',
+              // marginTop: 50,
+            }}
+          />
+          <Text style={styles.headerText}>Login</Text>
+          {/* <Text style={styles.headerText}>CampuShop</Text> */}
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
               mode='outlined'
-              label='Username'
+              label='Email'
+              selectionColor={COLORS.primary}
+              cursorColor={COLORS.primary}
+              outlineColor='#f07011'
+              activeOutlineColor='#f07011'
+              placeholderTextColor={'#f07011'}
               onChangeText={(text) =>
                 setFormData({ ...formData, username: text })
               }
@@ -65,12 +82,25 @@ const Login = () => {
               style={styles.input}
               mode='outlined'
               label='Password'
+              selectionColor='#f07011'
+              cursorColor='#f07011'
+              outlineColor='#f07011'
+              activeOutlineColor='#f07011'
               secureTextEntry
               onChangeText={(text) =>
                 setFormData({ ...formData, password: text })
               }
               value={formData.password}
             />
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
+            <Pressable
+              onPress={() => navigation.navigate('ForgotPassword')}
+              style={styles.forgotPassword}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </Pressable>
           </View>
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             {
@@ -84,14 +114,20 @@ const Login = () => {
           </TouchableOpacity>
           <Text style={styles.orText}>OR</Text>
           <TouchableOpacity style={styles.googleSignInButton}>
-            <Text style={styles.googleSignInText}>Sign in with Google</Text>
+            <Text style={styles.googleSignInText}>
+              Sign in with
+              <Text> Google</Text>
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Signup')}
             style={styles.navigateSignupButton}
           >
             <Text style={styles.navigateSignupText}>
-              Don't have an account? Sign Up
+              Don't have an account?{' '}
+              <Text style={{ color: '#f07011', fontWeight: '900' }}>
+                Sign up!
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -108,23 +144,19 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    marginTop: 20,
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
   },
   headerText: {
-    fontSize: 44,
-    color: '#7a29ff',
+    fontSize: 42,
+    color: COLORS.primary,
     fontWeight: 'bold',
     marginBottom: 40,
     textAlign: 'center',
   },
-  subHeaderText: {
-    fontSize: 38,
-    fontWeight: '800',
-    marginBottom: 10,
-    textAlign: 'left',
-  },
+
   inputContainer: {
     marginBottom: 20,
   },
@@ -136,21 +168,30 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   loginButton: {
-    backgroundColor: '#7a29ff',
+    backgroundColor: '#f07011',
     padding: 12,
     borderRadius: 50,
     marginBottom: 10,
   },
+
   loginButtonText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '800',
   },
   orText: {
     textAlign: 'center',
     fontSize: 18,
+    fontWeight: '700',
     marginVertical: 20,
+    color: '#374151',
+  },
+  forgotPassword: { marginTop: 10, alignSelf: 'flex-end' },
+  forgotPasswordText: {
+    color: COLORS.primary,
+    fontSize: 16,
+    fontWeight: '700',
   },
   googleSignInButton: {
     flexDirection: 'row',
@@ -158,13 +199,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 12,
     borderRadius: 50,
+    // backgroundColor: '#e5e7eb',
     borderWidth: 2,
-    borderColor: '#e2e8f0',
+    borderColor: COLORS.primary,
+    marginBottom: 10,
   },
   googleSignInText: {
     textAlign: 'center',
-    color: '#374151',
-    fontSize: 18,
+    // color: COLORS.primary,
+    fontSize: 20,
     fontWeight: '700',
   },
   navigateSignupButton: {
@@ -174,7 +217,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#374151',
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
   },
 });
 

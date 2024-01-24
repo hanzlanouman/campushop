@@ -28,7 +28,9 @@ const AdCard = ({ ad }) => {
       <Card style={styles.adCard}>
         <Card.Cover source={{ uri: ad.images[0] }} />
         <Card.Content>
-          <Title>{ad.title}</Title>
+          <Title style={styles.adTitle} numberOfLines={1} ellipsizeMode='tail'>
+            {ad.title}
+          </Title>
           <Paragraph>{ad.description}</Paragraph>
           <Paragraph style={styles.adPrice}>${ad.price}</Paragraph>
         </Card.Content>
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   adTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   adDescription: {

@@ -11,6 +11,8 @@ import { KeyboardAvoidingView } from 'react-native';
 import useAuth from '../hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import useFirestore from '../hooks/useFirestore';
+import { Image } from 'react-native';
+import { COLORS } from '../Theme/colors';
 
 const Signup = () => {
   const navigation = useNavigation();
@@ -62,16 +64,24 @@ const Signup = () => {
   return (
     <ScrollView
       contentContainerStyle={styles.scrollView}
-      keyboardShouldPersistTaps='handled'
+      // keyboardShouldPersistTaps='handled'
     >
       <View style={styles.container}>
-        <Text style={styles.headerText}>CampuShop</Text>
-        <Text style={styles.subHeaderText}>Sign Up</Text>
+        {/* <Text style={styles.headerText}>CampuShop</Text> */}
+        <Image
+          source={require('../../assets/login-1.png')}
+          style={styles.logoImage}
+        />
+        <Text style={styles.headerText}>Sign Up</Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
             mode='outlined'
             label='Username'
+            selectionColor='#f07011'
+            cursorColor='#f07011'
+            outlineColor='#f07011'
+            activeOutlineColor='#f07011'
             onChangeText={(text) =>
               setFormData({ ...formData, username: text })
             }
@@ -86,6 +96,10 @@ const Signup = () => {
             style={styles.input}
             mode='outlined'
             label='Email'
+            selectionColor={COLORS.primary}
+            cursorColor={COLORS.primary}
+            outlineColor={COLORS.primary}
+            activeOutlineColor={COLORS.primary}
             onChangeText={(text) => setFormData({ ...formData, email: text })}
             value={formData.email}
           />
@@ -96,6 +110,10 @@ const Signup = () => {
             style={styles.input}
             mode='outlined'
             label='Password'
+            selectionColor={COLORS.primary}
+            cursorColor={COLORS.primary}
+            outlineColor={COLORS.primary}
+            activeOutlineColor={COLORS.primary}
             secureTextEntry
             onChangeText={(text) =>
               setFormData({ ...formData, password: text })
@@ -124,7 +142,7 @@ const Signup = () => {
         <Text style={{ textAlign: 'center', marginTop: 30, fontSize: 18 }}>
           Already have an account?{' '}
           <Text
-            style={{ color: '#7a29ff' }}
+            style={{ color: COLORS.primary, fontWeight: 'bold' }}
             onPress={() => navigation.navigate('Login')}
           >
             Login
@@ -137,16 +155,16 @@ const Signup = () => {
 
 const styles = StyleSheet.create({
   signupButton: {
-    backgroundColor: '#7a29ff',
-    padding: 12,
+    backgroundColor: COLORS.primary,
+    padding: 15,
     borderRadius: 50,
     marginBottom: 10,
   },
   signupButtonText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '800',
   },
   scrollView: {
     flexGrow: 1,
@@ -160,17 +178,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   headerText: {
-    fontSize: 44,
-    color: '#7a29ff',
+    fontSize: 42,
+    color: COLORS.primary,
     fontWeight: 'bold',
-    marginBottom: 40,
+    marginBottom: 30,
     textAlign: 'center',
-  },
-  subHeaderText: {
-    fontSize: 38,
-    fontWeight: '800',
-    marginBottom: 10,
-    textAlign: 'left',
   },
   inputContainer: {
     marginBottom: 20,
@@ -180,22 +192,18 @@ const styles = StyleSheet.create({
     color: 'red',
     marginTop: 5,
   },
-  loginButton: {
-    backgroundColor: '#7a29ff',
-    padding: 12,
-    borderRadius: 50,
-    marginBottom: 10,
-  },
-  loginButtonText: {
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 20,
-    fontWeight: '700',
+
+  logoImage: {
+    width: 250,
+    height: 250,
+    alignSelf: 'center',
   },
   orText: {
     textAlign: 'center',
     fontSize: 18,
+    fontWeight: '700',
     marginVertical: 20,
+    color: '#374151',
   },
   googleSignInButton: {
     flexDirection: 'row',
@@ -204,12 +212,12 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 50,
     borderWidth: 2,
-    borderColor: '#e2e8f0',
+    borderColor: COLORS.primary,
+    marginBottom: 10,
   },
   googleSignInText: {
     textAlign: 'center',
-    color: '#374151',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
   },
 });

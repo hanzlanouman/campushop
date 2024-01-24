@@ -11,6 +11,7 @@ import {
 import { Card, Title, Paragraph } from 'react-native-paper';
 import useFirestore from '../hooks/useFirestore'; // Import your useFirestore hook
 import { useNavigation } from '@react-navigation/native';
+import { COLORS } from '../Theme/colors';
 
 const MyAds = () => {
   const [userAds, setUserAds] = useState([]);
@@ -79,7 +80,7 @@ const AdCard = ({ ad }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 50,
+    paddingTop: 50,
     backgroundColor: '#fff',
   },
   centered: {
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: COLORS.primary,
   },
 
   // Add other styles as needed

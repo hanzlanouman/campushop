@@ -14,6 +14,7 @@ import {
 import { TextInput, RadioButton } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { COLORS } from '../Theme/colors';
 
 const RegistrationScreen = ({ navigation, route }) => {
   const { formData } = route.params;
@@ -80,7 +81,7 @@ const RegistrationScreen = ({ navigation, route }) => {
         keyboardShouldPersistTaps='handled'
       >
         <View style={styles.container}>
-          <Text style={styles.headerText}>Registration</Text>
+          <Text style={styles.headerText}>Student Details</Text>
 
           {/* Department Modal */}
           <TouchableOpacity
@@ -105,6 +106,7 @@ const RegistrationScreen = ({ navigation, route }) => {
                     value={dept}
                     status={department === dept ? 'checked' : 'unchecked'}
                     onPress={() => setDepartment(dept)}
+                    color='#f07011'
                   />
                   <Text style={styles.radioText}>{dept}</Text>
                 </View>
@@ -125,6 +127,10 @@ const RegistrationScreen = ({ navigation, route }) => {
               onChangeText={setRegNo}
               value={regNo}
               placeholder='AB12-ABC-000'
+              selectionColor={COLORS.primary}
+              cursorColor={COLORS.primary}
+              outlineColor={COLORS.primary}
+              activeOutlineColor={COLORS.primary}
             />
           </View>
 
@@ -202,12 +208,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   modalButton: {
-    backgroundColor: '#7a29ff',
+    backgroundColor: COLORS.primary,
     borderRadius: 20,
-    paddingHorizontal: 25,
+    paddingHorizontal: 40,
     paddingVertical: 14,
-    elevation: 2,
-    marginTop: 20,
+    elevation: 1,
+    marginTop: 30,
   },
   modalButtonText: {
     color: 'white',
@@ -217,14 +223,14 @@ const styles = StyleSheet.create({
   },
   pickerButton: {
     borderWidth: 1,
-    borderColor: '#7a29ff',
+    borderColor: COLORS.primary,
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',
     marginBottom: 20,
   },
   pickerButtonText: {
-    color: '#7a29ff',
+    color: COLORS.primary,
     fontSize: 18,
   },
   scrollView: {
@@ -244,20 +250,20 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#7a29ff',
+    borderColor: COLORS.primary,
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 20,
   },
   picker: {
     height: 50, // Adjust the height as needed
-    color: '#7a29ff',
+    color: COLORS.primary,
     fontSize: 18,
     // Add any additional styling you prefer
   },
   headerText: {
-    fontSize: 44,
-    color: '#7a29ff',
+    fontSize: 36,
+    color: COLORS.primary,
     fontWeight: 'bold',
     marginBottom: 40,
     textAlign: 'center',
@@ -271,7 +277,7 @@ const styles = StyleSheet.create({
     // Add any additional styling you prefer
   },
   uploadButton: {
-    backgroundColor: '#7a29ff',
+    backgroundColor: COLORS.primary,
     padding: 12,
     marginTop: 30,
     borderRadius: 50,
@@ -285,7 +291,7 @@ const styles = StyleSheet.create({
   },
 
   submitButton: {
-    backgroundColor: '#7a29ff',
+    backgroundColor: COLORS.primary,
     padding: 12,
     marginTop: 100,
     textAlign: 'center',

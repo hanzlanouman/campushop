@@ -14,6 +14,7 @@ import SettingsNav from './SettingsNav';
 import UserAdsNav from './UserAdsNav';
 import Inbox from '../screens/chats/Inbox';
 import ChatNav from './ChatNav';
+import { COLORS } from '../Theme/colors';
 
 const Tab = createBottomTabNavigator();
 const UserNav = () => {
@@ -40,11 +41,11 @@ const UserNav = () => {
             }
 
             // You can return any component that you like here!
-            return <Ionicons name={iconName} size={30} color={color} />;
+            return <Ionicons name={iconName} size={33} color={color} />;
           },
-          tabBarActiveTintColor: '#7a29ff',
+          tabBarActiveTintColor: COLORS.primary,
           tabBarInactiveTintColor: '#444',
-          tabBarActiveBackgroundColor: '#e9e9e9',
+          // tabBarActiveBackgroundColor: '#f8f8f8',
           tabBarShowLabel: false,
           // Dont show header
           headerShown: false,

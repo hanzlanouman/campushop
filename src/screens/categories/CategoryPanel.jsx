@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text, FlatList } from 'react-native';
 import CategoryCard from '../../components/CategoryCard';
 import { useNavigation } from '@react-navigation/native';
 
@@ -53,14 +53,23 @@ const CategoryPanel = () => {
 
   return (
     <View style={styles.categoriesContainer}>
-      {categories.map((category) => (
-        <CategoryCard
-          key={category.id}
-          category={category.name}
-          icon={category.icon}
-          onPress={() => handlePress(category.name)}
-        />
-      ))}
+      <Text style={styles.headerText}>Browse Categories</Text>
+
+      <FlatList
+        data={categories}
+        style={styles.categoriesList}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <CategoryCard
+            key={item.id}
+            category={item.title}
+            icon={item.icon}
+            onPress={() => handlePress(item.name)}
+          />
+        )}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -69,10 +78,11 @@ export default CategoryPanel;
 
 const styles = StyleSheet.create({
   categoriesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
+    marginVertical: 10,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 5,
   },
 });

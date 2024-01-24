@@ -13,6 +13,7 @@ import * as FileSystem from 'expo-file-system';
 import useStorage from '../hooks/useStorage';
 import useFirestore from '../hooks/useFirestore';
 import useAuth from '../hooks/useAuth';
+import { COLORS } from '../Theme/colors';
 
 const AddProfilePicture = ({ navigation, route }) => {
   const { data } = route.params;
@@ -75,7 +76,14 @@ const AddProfilePicture = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       {/* Display the selected profile image */}
-      {profileImage && <Image source={profileImage} style={styles.image} />}
+      {profileImage ? (
+        <Image source={{ uri: profileImage.uri }} style={styles.image} />
+      ) : (
+        <Image
+          source={require('../../assets/default-profile.jpg')}
+          style={styles.image}
+        />
+      )}
 
       {/* Profile Picture Upload */}
       <TouchableOpacity
@@ -96,9 +104,9 @@ const AddProfilePicture = ({ navigation, route }) => {
         disabled={isLoading}
       >
         {isLoading ? (
-          <ActivityIndicator size='small' color='white' />
+          <ActivityIndicator size={26} color='white' />
         ) : (
-          <Text style={styles.submitButtonText}>Complete Registration</Text>
+          <Text style={styles.submitButtonText}>Finish</Text>
         )}
       </TouchableOpacity>
     </View>
@@ -109,7 +117,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
+
+    backgroundColor: 'white',
+    paddingTop: 40,
   },
 
   image: {
@@ -117,13 +128,16 @@ const styles = StyleSheet.create({
     height: 300,
     borderRadius: 150,
     marginBottom: 40,
+    borderColor: COLORS.primary,
+    borderWidth: 3,
   },
 
   uploadButton: {
-    backgroundColor: '#7a29ff',
+    backgroundColor: COLORS.primary,
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 50,
     marginBottom: 20,
+    paddingHorizontal: 60,
   },
 
   uploadButtonText: {
@@ -134,9 +148,9 @@ const styles = StyleSheet.create({
 
   submitButton: {
     width: 300,
-    backgroundColor: '#7a29ff',
+    backgroundColor: COLORS.primary,
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 50,
   },
 
   submitButtonText: {

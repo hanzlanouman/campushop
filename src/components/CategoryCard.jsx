@@ -2,16 +2,23 @@ import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Pressable } from 'react-native';
 import { Card, Title } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../Theme/colors';
 
 const CategoryCard = ({ category, icon, onPress }) => {
   return (
     <Pressable onPress={onPress}>
-      <Card style={styles.card}>
+      <View style={styles.card}>
         <View style={styles.cardImage}>
-          <Ionicons name={icon} size={50} color='#7a29ff' />
+          <Ionicons
+            name={icon}
+            size={40}
+            color={
+              COLORS.random[Math.floor(Math.random() * COLORS.random.length)]
+            }
+          />
         </View>
-        <Title style={styles.cardTitleText}>{category}</Title>
-      </Card>
+      </View>
+      <Title style={styles.cardTitleText}>{category}</Title>
     </Pressable>
   );
 };
@@ -20,22 +27,25 @@ export default CategoryCard;
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 10,
-    width: 100,
-    height: 110,
+    marginTop: 10,
+    marginBottom: 5,
+    marginHorizontal: 10,
+    // width: 100,
+    // height: 110,
     backgroundColor: '#fff',
     alignItems: 'center',
-    borderRadius: 10,
+    justifyContent: 'center',
+    borderRadius: 100,
     elevation: 3,
   },
   cardImage: {
-    padding: 5,
+    padding: 25,
     alignItems: 'center',
     justifyContent: 'center',
   },
   cardTitleText: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '400',
     color: '#555',
     textAlign: 'center',
     marginBottom: 5,

@@ -16,6 +16,7 @@ import useFirestore from '../hooks/useFirestore';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../config/firebase.config';
 import { ActivityIndicator } from 'react-native-paper';
+import { COLORS } from '../Theme/colors';
 
 const NewAdForm = () => {
   const { createNewAd, loading } = useFirestore();
@@ -169,7 +170,7 @@ const NewAdForm = () => {
       />
       <Text style={styles.label}>
         Add product images{' '}
-        {errors.images && <Text style={styles.required}>*</Text>}
+        {/* {errors.images && <Text style={styles.required}>*</Text>} */}
       </Text>
       <Text style={{ marginBottom: 10 }}>
         {formData.images.length} / 5 Selected
@@ -225,6 +226,10 @@ const FormInput = ({ label, error, ...props }) => (
       style={[styles.input, error && styles.errorInput]}
       {...props}
       label={label}
+      selectionColor={COLORS.primary}
+      cursorColor={COLORS.primary}
+      outlineColor={COLORS.primary}
+      activeOutlineColor={COLORS.primary}
       mode='outlined'
     />
     {error && <Text style={styles.errorText}>{error}</Text>}
@@ -232,31 +237,42 @@ const FormInput = ({ label, error, ...props }) => (
 );
 
 const FormPicker = ({ label, error, items, ...props }) => (
-  <View style={styles.formControl}>
+  <View style={styles.formPicker}>
     <Text style={styles.label}>
       {label} {error && <Text style={styles.required}>*</Text>}
     </Text>
-    <Picker style={[styles.picker, error && styles.errorInput]} {...props}>
-      {items.map((item, index) => (
-        <Picker.Item key={index} label={item.label} value={item.value} />
-      ))}
-    </Picker>
+    <View style={styles.pickerContainer}>
+      <Picker style={[styles.picker, error && styles.errorInput]} {...props}>
+        {items.map((item, index) => (
+          <Picker.Item
+            key={index}
+            label={item.label}
+            value={item.value}
+            style={styles.pickerItem}
+            activeOutlineColor={COLORS.primary}
+          />
+        ))}
+      </Picker>
+    </View>
     {error && <Text style={styles.errorText}>{error}</Text>}
   </View>
 );
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     flex: 1,
-    marginTop: 40,
+    paddingTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 40,
   },
+
   headerText: {
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: COLORS.primary,
   },
   formControl: {
     marginBottom: 8,
@@ -265,21 +281,27 @@ const styles = StyleSheet.create({
     fontSize: 18,
     // marginTop: 10,
     fontWeight: 'bold',
+    color: COLORS.black,
   },
   input: {
     borderColor: 'gray',
     marginBottom: 5,
+    fontSize: 16,
   },
   picker: {
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: 'gray',
     borderRadius: 10,
     borderRadius: 5,
   },
+  pickerItem: {
+    fontSize: 16,
+    color: COLORS.black,
+  },
   button: {
-    backgroundColor: '#7a29aa',
+    backgroundColor: COLORS.primary,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 50,
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -312,6 +334,15 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 14,
     marginTop: 5,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    marginTop: 5,
+    // marginLeft: 5,
+    borderColor: COLORS.primary,
+    borderRadius: 5,
+    overflow: 'hidden',
+    marginBottom: 15,
   },
 });
 
