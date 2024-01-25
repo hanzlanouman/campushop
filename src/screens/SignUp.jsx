@@ -78,10 +78,10 @@ const Signup = () => {
             style={styles.input}
             mode='outlined'
             label='Username'
-            selectionColor='#f07011'
-            cursorColor='#f07011'
-            outlineColor='#f07011'
-            activeOutlineColor='#f07011'
+            selectionColor={COLORS.primary}
+            cursorColor={COLORS.primary}
+            outlineColor={COLORS.primary}
+            activeOutlineColor={COLORS.primary}
             onChangeText={(text) =>
               setFormData({ ...formData, username: text })
             }

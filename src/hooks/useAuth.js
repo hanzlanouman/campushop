@@ -9,6 +9,12 @@ import {
 } from 'firebase/auth';
 import { AuthContext } from '../contexts/AuthContext';
 import { Alert } from 'react-native';
+import {
+  getAuth,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword as firebaseUpdatePassword,
+} from 'firebase/auth';
 
 const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -72,7 +78,30 @@ const useAuth = () => {
       .signOut()
       .then(() => console.log('User signed out!'));
   };
-  return { user, loading, signIn, signUp, signOutUser, currentUser };
+  const reauthenticateUser = async (email, password) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(email, password);
+
+    return reauthenticateWithCredential(user, credential);
+  };
+
+  const updatePassword = async (newPassword) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    return firebaseUpdatePassword(user, newPassword);
+  };
+  return {
+    user,
+    loading,
+    signIn,
+    signUp,
+    signOutUser,
+    currentUser,
+    updatePassword,
+    reauthenticateUser,
+  };
 };
 
 export default useAuth;

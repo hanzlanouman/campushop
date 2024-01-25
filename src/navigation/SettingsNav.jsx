@@ -6,16 +6,30 @@ const SettingStack = createStackNavigator();
 
 const SettingsNav = () => {
   return (
-    <SettingStack.Navigator initialRouteName='Settings'>
+    <SettingStack.Navigator initialRouteName='SettingsMenu'>
       <SettingStack.Screen
-        name='Settings'
+        name='SettingsMenu'
         component={Settings}
         options={{
           headerShown: false,
         }}
       />
-      <SettingStack.Screen name='Profile' component={Profile} />
-      <SettingStack.Screen name='ChangePassword' component={ChangePassword} />
+      <SettingStack.Screen
+        name='Profile'
+        component={Profile}
+        options={{
+          headerShown: true,
+          title: 'Back',
+        }}
+      />
+      <SettingStack.Screen
+        name='ChangePassword'
+        component={ChangePassword}
+        options={{
+          headerShown: true,
+          title: 'Back',
+        }}
+      />
       {/* <SettingStack.Screen name='ChangePassword' component={ChangePassword} /> */}
     </SettingStack.Navigator>
   );

@@ -14,39 +14,52 @@ const Settings = () => {
         title='Profile'
         left={() => (
           <List.Icon
-            icon={() => <Ionicons name='ios-person' size={24} color='black' />}
+            icon={() => (
+              <Ionicons name='ios-person' size={32} color={COLORS.primary} />
+            )}
           />
         )}
         onPress={() => navigation.navigate('Profile')}
+        titleStyle={{ fontSize: 18 }}
       />
 
       <List.Item
         title='Change Password'
         left={() => (
           <List.Icon
-            icon={() => <Ionicons name='ios-key' size={24} color='black' />}
+            icon={() => (
+              <Ionicons name='ios-key' size={32} color={COLORS.primary} />
+            )}
           />
         )}
         onPress={() => navigation.navigate('ChangePassword')}
+        titleStyle={{ fontSize: 18 }}
       />
 
       <List.Item
         title='Dark Mode'
         left={() => (
           <List.Icon
-            icon={() => <Ionicons name='ios-moon' size={24} color='black' />}
+            icon={() => (
+              <Ionicons name='ios-moon' size={32} color={COLORS.primary} />
+            )}
           />
         )}
+        titleStyle={{ fontSize: 18 }}
       />
 
       <List.Item
         title='Logout'
         left={() => (
           <List.Icon
-            icon={() => <Ionicons name='ios-log-out' size={24} color='black' />}
+            icon={() => (
+              <Ionicons name='ios-log-out' size={32} color={COLORS.primary} />
+            )}
           />
         )}
         onPress={() => auth.signOut()}
+        // set fontsize to 22
+        titleStyle={{ fontSize: 18, fontWeight: 'bold' }}
       />
     </View>
   );

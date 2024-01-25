@@ -56,14 +56,13 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: 'transparent', // Ensure the TextInput background is transparent
+    backgroundColor: 'transparent', 
     paddingVertical: 13,
     paddingHorizontal: 20,
     fontSize: 16,
-    color: '#000', // Text color
+    color: '#000',
   },
   searchIconContainer: {
-    // backgroundColor: '#f0900', // Dark background for the search icon
     borderRadius: 50,
     padding: 10,
   },

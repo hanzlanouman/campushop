@@ -9,11 +9,13 @@ import {
   doc,
   setDoc,
   orderBy,
+  updateDoc,
 } from 'firebase/firestore';
 import { useState } from 'react';
 import useStorage from './useStorage';
 import { auth } from '../config/firebase.config';
 import { startAfter, limit } from 'firebase/firestore';
+import { Alert } from 'react-native';
 const useFirestore = () => {
   const { uploadAdImages } = useStorage();
   const [loading, setLoading] = useState(false);
@@ -60,6 +62,50 @@ const useFirestore = () => {
       return [];
     }
   };
+  const updateUserProfile = async (userId, profileData) => {
+    console.log(userId, profileData);
+
+    // Check if username exists and is different from the current user's username
+    if (profileData.username && profileData.username !== currentUser.username) {
+      const usernameExists = await userExists(profileData.username);
+      if (usernameExists) {
+        return Alert.alert(
+          'Error',
+          'Username already exists, please try another one'
+        );
+      }
+    }
+
+    // Check if email exists and is different from the current user's email
+    if (profileData.email && profileData.email !== currentUser.email) {
+      const emailExists = await emailExists(profileData.email);
+      if (emailExists) {
+        return Alert.alert(
+          'Error',
+          'Email already in use, please try another one'
+        );
+      }
+    }
+
+    try {
+      const userProfileRef = doc(firestore, 'users', userId);
+      await setDoc(userProfileRef, profileData, { merge: true });
+      return Alert.alert('Success', 'Profile updated successfully');
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      return Alert.alert('Error', 'Error updating profile');
+    }
+  };
+  const updateProfileImage = async (userId, imageUrl) => {
+    try {
+      const userProfileRef = doc(firestore, 'users', userId);
+      await updateDoc(userProfileRef, { profileImageUrl: imageUrl });
+      console.log('Profile image updated successfully');
+    } catch (error) {
+      console.error('Error updating profile image:', error);
+    }
+  };
+
   const setUserProfile = async (userId, profileData) => {
     console.log('set user profile');
     console.log(profileData);
@@ -199,6 +245,8 @@ const useFirestore = () => {
     deleteAd,
     getUsername,
     searchAds,
+    updateUserProfile,
+    updateProfileImage,
     getCategorizedAds,
 
     loading,

@@ -23,6 +23,7 @@ const AddProfilePicture = ({ navigation, route }) => {
   const { uploadIdCardImage, uploadProfilePicture } = useStorage();
   const { signUp } = useAuth();
   const { setUserProfile } = useFirestore();
+  console.log(data);
 
   const handleProfilePictureUpload = async () => {
     const permissionResult =

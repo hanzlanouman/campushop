@@ -129,7 +129,7 @@ const Login = () => {
           >
             <Text style={styles.navigateSignupText}>
               Don't have an account?{' '}
-              <Text style={{ color: '#f07011', fontWeight: '900' }}>
+              <Text style={{ color: COLORS.primary, fontWeight: '900' }}>
                 Sign up!
               </Text>
             </Text>

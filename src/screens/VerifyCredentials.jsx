@@ -20,6 +20,8 @@ const RegistrationScreen = ({ navigation, route }) => {
   const { formData } = route.params;
   const [department, setDepartment] = useState('');
   const [regNo, setRegNo] = useState('');
+  const [phoneNo, setPhoneNo] = useState('');
+  const [name, setName] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
   const [idCardImage, setIdCardImage] = useState(null);
   const departments = ['BSE', 'BCE', 'BCS', 'EEE'];
@@ -31,6 +33,8 @@ const RegistrationScreen = ({ navigation, route }) => {
       department,
       regNo,
       idCardImage,
+      phoneNo,
+      name,
     };
 
     if (!(idCardImage === null || department === '' || regNo === '')) {
@@ -83,6 +87,49 @@ const RegistrationScreen = ({ navigation, route }) => {
         <View style={styles.container}>
           <Text style={styles.headerText}>Student Details</Text>
 
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              mode='outlined'
+              label='Reg No'
+              onChangeText={setRegNo}
+              value={regNo}
+              placeholder='AB12-ABC-000'
+              placeholderTextColor='#aaa'
+              selectionColor={COLORS.primary}
+              cursorColor={COLORS.primary}
+              outlineColor={COLORS.primary}
+              activeOutlineColor={COLORS.primary}
+            />
+            <TextInput
+              style={styles.input}
+              mode='outlined'
+              label='Name'
+              onChangeText={setName}
+              value={name}
+              placeholderTextColor='#aaa'
+              placeholder='John Doe'
+              selectionColor={COLORS.primary}
+              cursorColor={COLORS.primary}
+              outlineColor={COLORS.primary}
+              activeOutlineColor={COLORS.primary}
+            />
+            <TextInput
+              style={styles.input}
+              mode='outlined'
+              label='Phone Number'
+              onChangeText={setPhoneNo}
+              value={phoneNo}
+              keyboardType='numeric'
+              placeholder='0312-1234567'
+              placeholderTextColor='#aaa'
+              selectionColor={COLORS.primary}
+              cursorColor={COLORS.primary}
+              outlineColor={COLORS.primary}
+              activeOutlineColor={COLORS.primary}
+            />
+          </View>
+
           {/* Department Modal */}
           <TouchableOpacity
             style={styles.pickerButton}
@@ -119,20 +166,6 @@ const RegistrationScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           </Modal>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              mode='outlined'
-              label='Reg No'
-              onChangeText={setRegNo}
-              value={regNo}
-              placeholder='AB12-ABC-000'
-              selectionColor={COLORS.primary}
-              cursorColor={COLORS.primary}
-              outlineColor={COLORS.primary}
-              activeOutlineColor={COLORS.primary}
-            />
-          </View>
 
           <Text
             style={{
@@ -146,22 +179,27 @@ const RegistrationScreen = ({ navigation, route }) => {
           </Text>
 
           {/* Picture Upload */}
+          {idCardImage && (
+            <Image
+              source={idCardImage}
+              style={{
+                width: 100,
+                height: 100,
+                marginTop: 10,
+                alignSelf: 'center',
+              }}
+            />
+          )}
           <TouchableOpacity
             style={styles.uploadButton}
             onPress={handlePictureUpload}
           >
-            <Text style={styles.uploadButtonText}>Upload Picture</Text>
+            {idCardImage === null ? (
+              <Text style={styles.uploadButtonText}>Upload ID Card</Text>
+            ) : (
+              <Text style={styles.uploadButtonText}>Change ID Card</Text>
+            )}
           </TouchableOpacity>
-
-          {/* Display the selected image */}
-          {idCardImage && (
-            <Image
-              source={idCardImage}
-              style={{ width: 200, height: 200, marginTop: 10 }}
-            />
-          )}
-
-          {/* Submit Button */}
           <TouchableOpacity
             style={styles.submitButton}
             onPress={navigateToAddProfilePicture}
@@ -253,7 +291,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderRadius: 8,
     overflow: 'hidden',
-    marginBottom: 20,
+    paddingBottom: 20,
   },
   picker: {
     height: 50, // Adjust the height as needed
@@ -265,15 +303,16 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: COLORS.primary,
     fontWeight: 'bold',
-    marginBottom: 40,
+    paddingBottom: 40,
     textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 20,
+    paddingBottom: 20,
   },
   input: {
     height: 50, // Adjust the height as needed
     fontSize: 18,
+    marginBottom: 10,
     // Add any additional styling you prefer
   },
   uploadButton: {
@@ -281,7 +320,6 @@ const styles = StyleSheet.create({
     padding: 12,
     marginTop: 30,
     borderRadius: 50,
-    marginBottom: 10,
   },
   uploadButtonText: {
     textAlign: 'center',
@@ -293,7 +331,7 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: COLORS.primary,
     padding: 12,
-    marginTop: 100,
+    marginTop: 40,
     textAlign: 'center',
     color: 'white',
     borderRadius: 50,

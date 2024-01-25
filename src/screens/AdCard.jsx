@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     borderRadius: 0,
     elevation: 0,
+    backgroundColor: '#fff',
     // borderWidth: 1,
   },
   adTitle: {
