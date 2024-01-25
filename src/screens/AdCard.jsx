@@ -1,16 +1,28 @@
-// AdCard.jsx
-import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { Card, Title, Paragraph } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { Card, Title, Paragraph, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../Theme/colors';
+import useFirestore from '../hooks/useFirestore'; // Import useFirestore hook
 
-const AdCard = ({ ad }) => {
+const AdCard = ({ ad, ownAd }) => {
   const navigation = useNavigation();
+  const { updateAdStatus } = useFirestore();
+  const [isActive, setIsActive] = useState(ad.isActive);
+
+  useEffect(() => {
+    setIsActive(ad.isActive);
+  }, [ad.isActive]);
+
+  const toggleIsActive = async () => {
+    const newIsActive = !isActive;
+    setIsActive(newIsActive);
+    await updateAdStatus(ad.id, newIsActive);
+  };
   return (
     <Pressable
       onPress={() => navigation.navigate('AdDetails', { ad })}
-      style={{ marginBottom: 10 }}
+      style={styles.cardPressable}
     >
       <Card style={styles.adCard}>
         <Card.Cover source={{ uri: ad.images[0] }} style={styles.adCardCover} />
@@ -32,9 +44,27 @@ const AdCard = ({ ad }) => {
             {new Date(ad.createdAt?.toDate()).toDateString()}
           </Paragraph>
         </Card.Content>
-        <Card.Actions>
-          {/* <Button title='View Details' onPress={() => {}} /> */}
-        </Card.Actions>
+        {ownAd && (
+          <Card.Actions style={styles.cardActions}>
+            {/* A Line Divider */}
+
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: isActive ? COLORS.secondary : '#777',
+              }}
+            >
+              Active
+            </Text>
+            <Switch
+              trackColor={{ false: '#767577', true: COLORS.primary }}
+              thumbColor={isActive ? COLORS.secondary : '#f4f3f4'}
+              onValueChange={toggleIsActive}
+              value={isActive}
+            />
+          </Card.Actions>
+        )}
       </Card>
     </Pressable>
   );
@@ -99,6 +129,18 @@ const styles = StyleSheet.create({
   adsList: {
     flex: 1,
     paddingVertical: 10,
+  },
+  cardPressable: {
+    marginBottom: 10,
+  },
+  cardActions: {
+    justifyContent: 'flex-end',
+    paddingRight: 10,
+    marginTop: 20,
+  },
+  adDate: {
+    // fontSize: 16,
+    color: '#777',
   },
 });
 

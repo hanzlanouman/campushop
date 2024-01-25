@@ -89,12 +89,13 @@ const NewAdForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setSubmitted(true);
     if (validateForm()) {
       console.log('Form Data:', formData);
       console.log(formData);
-      const result = createNewAd(formData);
+      formData.isActive = true;
+      const result = await createNewAd(formData);
       if (result) {
         Alert.alert('Ad created successfully');
         navigation.navigate('Home');

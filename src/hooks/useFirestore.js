@@ -62,6 +62,15 @@ const useFirestore = () => {
       return [];
     }
   };
+  const updateAdStatus = async (adId, isActive) => {
+    try {
+      const adRef = doc(firestore, 'ads', adId);
+      await updateDoc(adRef, { isActive });
+      console.log('Ad status updated successfully');
+    } catch (error) {
+      console.error('Error updating ad status:', error);
+    }
+  };
   const updateUserProfile = async (userId, profileData) => {
     console.log(userId, profileData);
 
@@ -200,8 +209,11 @@ const useFirestore = () => {
   };
 
   const getAllAds = async () => {
-    // Assuming each ad document has a 'createdAt' or 'timestamp' field
-    const q = query(collection(firestore, 'ads'), orderBy('createdAt', 'desc'));
+    const q = query(
+      collection(firestore, 'ads'),
+      where('isActive', '==', true), // Filter to show only active ads
+      orderBy('createdAt', 'desc')
+    );
 
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({
@@ -209,11 +221,11 @@ const useFirestore = () => {
       ...doc.data(),
     }));
   };
-
-  getCategorizedAds = async (category) => {
+  const getCategorizedAds = async (category) => {
     setLoading(true);
     const q = query(
       collection(firestore, 'ads'),
+      where('isActive', '==', true), // Filter to show only active ads
       where('category', '==', category)
     );
     const querySnapshot = await getDocs(q);
@@ -247,6 +259,7 @@ const useFirestore = () => {
     searchAds,
     updateUserProfile,
     updateProfileImage,
+    updateAdStatus,
     getCategorizedAds,
 
     loading,

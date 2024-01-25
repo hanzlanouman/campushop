@@ -48,7 +48,7 @@ const MyAds = () => {
       <FlatList
         data={userAds}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <AdCard ad={item} />} // Assuming AdCard is a component you have
+        renderItem={({ item }) => <AdCard ad={item} ownAd={true} />} // Assuming AdCard is a component you have
         style={styles.adsList}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
