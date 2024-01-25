@@ -20,7 +20,7 @@ const Chat = ({ route }) => {
   const [otherUser, setOtherUser] = useState({});
   const { currentUser } = useContext(AuthContext);
   const currentUserUid = auth.currentUser.uid;
-  const { otherUserId, adTitle } = route.params; // ID of the user who posted the ad
+  const { otherUserId, adTitle, username } = route.params; // ID of the user who posted the ad
 
   const getOtherUser = useCallback(async () => {
     const otherUserDoc = await getDoc(doc(firestore, 'users', otherUserId));
@@ -92,7 +92,7 @@ const Chat = ({ route }) => {
             marginTop: 50,
           }}
         >
-          {otherUser.username}
+          {username}
         </Text>
       </Text>
       <Text

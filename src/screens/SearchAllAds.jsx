@@ -5,12 +5,16 @@ import {
   ActivityIndicator,
   RefreshControl,
   StyleSheet,
+  Text,
+  Pressable,
 } from 'react-native';
+import { Avatar } from 'react-native-paper';
 import useFirestore from '../hooks/useFirestore';
 import CustomSearchBar from '../components/CustomSearchBar';
 import AdCard from './AdCard'; // Assuming you have an AdCard component styled similarly to the one in Home
+import useAuth from '../hooks/useAuth';
 
-const SearchAllAds = ({ route }) => {
+const SearchAllAds = ({ route, navigation }) => {
   const [ads, setAds] = useState([]);
   const { searchAds, loading } = useFirestore();
   const { searchTerm } = route.params;
@@ -34,13 +38,20 @@ const SearchAllAds = ({ route }) => {
     }
   };
 
+  const { currentUser } = useAuth();
   return (
     <View style={styles.container}>
-      <View style={styles.searchbarContainer}>
+      <View style={styles.topBar}>
         <CustomSearchBar
           onSearch={(newQuery) => performSearch(newQuery, true)}
           initialValue={searchTerm}
         />
+        <Pressable onPress={() => navigation.navigate('Profile')}>
+          <Avatar.Image
+            size={50}
+            source={{ uri: currentUser?.profileImageUrl || undefined }}
+          />
+        </Pressable>
       </View>
       <FlatList
         data={ads}
@@ -57,8 +68,15 @@ const SearchAllAds = ({ route }) => {
         contentContainerStyle={styles.adsList}
         showsVerticalScrollIndicator={false}
       />
-      {loading && !ads.length && (
-        <ActivityIndicator size='large' style={styles.activityIndicator} />
+      {ads.length === 0 && !loading && (
+        <>
+          <Text style={styles.NoAdsFound}>
+            No ads found
+            <Text style={styles.NoAdsSuggestion}>
+              {'\n'}Try searching for something else!
+            </Text>
+          </Text>
+        </>
       )}
     </View>
   );
@@ -70,6 +88,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingTop: 40,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  NoAdsFound: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    flex: 10,
+    fontSize: 32,
+  },
+  NoAdsSuggestion: {
+    textAlign: 'center',
+    lineHeight: 40,
+    fontSize: 20,
+    fontWeight: 'normal',
   },
   adsList: {
     paddingVertical: 10,

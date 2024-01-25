@@ -51,8 +51,9 @@ const Inbox = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  const openChat = (otherUserId) => {
-    navigation.navigate('Chat', { otherUserId });
+  const openChat = (otherUserId, username) => {
+    console.log(username);
+    navigation.navigate('Chat', { otherUserId, username });
   };
 
   return (
@@ -73,7 +74,7 @@ const Inbox = ({ navigation }) => {
         renderItem={({ item }) => (
           <View style={styles.item}>
             <TouchableOpacity
-              onPress={() => openChat(item.uid)}
+              onPress={() => openChat(item.uid, item.username)}
               style={styles.itemContainer}
             >
               <Ionicons name='mail' size={40} color={COLORS.primary} />

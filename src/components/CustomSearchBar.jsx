@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TextInput,
@@ -10,24 +10,19 @@ import {
 import { COLORS } from '../Theme/colors';
 
 const CustomSearchBar = ({ onSearch, initialValue = '' }) => {
-  const [searchQuery, setSearchQuery] = useState(initialValue);
-
-  // Effect to update searchQuery when initialValue changes
-  useEffect(() => {
-    setSearchQuery(initialValue);
-  }, [initialValue]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchPress = () => {
-    // Trim the search query to remove whitespace from both ends
-    onSearch(searchQuery.trim());
+    onSearch(searchQuery);
   };
+
   return (
     <View style={styles.searchContainer}>
       <TextInput
         style={styles.searchInput}
         placeholder='Search...'
         placeholderTextColor='#000' // Placeholder text color
-        value={searchQuery || initialValue}
+        value={searchQuery}
         onChangeText={setSearchQuery}
         onSubmitEditing={handleSearchPress}
         returnKeyLabel='Search'

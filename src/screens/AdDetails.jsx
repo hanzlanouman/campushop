@@ -14,6 +14,7 @@ import Modal from 'react-native-modal';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { auth } from '../config/firebase.config';
 import useFirestore from '../hooks/useFirestore';
+import { COLORS } from '../Theme/colors';
 
 const AdDetails = ({ navigation, route }) => {
   const { ad } = route.params;
@@ -21,10 +22,10 @@ const AdDetails = ({ navigation, route }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const imageScrollViewRef = useRef(null);
   const { deleteAd, loading } = useFirestore();
-  console.log(ad.postedBy);
+  // console.log(ad.postedBy);
 
   const screenWidth = Dimensions.get('window').width;
-  console.log(loading);
+  console.log(ad.images.length);
   return !loading ? (
     <ScrollView style={styles.container}>
       <View style={styles.imageContainer}>
@@ -34,18 +35,22 @@ const AdDetails = ({ navigation, route }) => {
           showsHorizontalScrollIndicator={false}
           ref={imageScrollViewRef}
         >
-          {ad.images.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => {
-                setSelectedImage(item);
-                setModalVisible(true);
-              }}
-            >
-              <Image source={{ uri: item }} style={styles.image} />
-              <Text style={{ textAlign: 'center' }}>{index + 1}</Text>
-            </TouchableOpacity>
-          ))}
+          {ad.images.length > 0 ? (
+            ad.images.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  setSelectedImage(item);
+                  setModalVisible(true);
+                }}
+              >
+                <Image source={{ uri: item }} style={styles.image} />
+                <Text style={{ textAlign: 'center' }}>{index + 1}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={{ textAlign: 'center', fontSize: 44 }}>No Images</Text>
+          )}
         </ScrollView>
       </View>
       <View style={styles.detailsContainer}>
@@ -58,7 +63,7 @@ const AdDetails = ({ navigation, route }) => {
             <View style={styles.buttonContainer}>
               <Pressable style={styles.button}>
                 {/* Icon For Call */}
-                <MaterialIcons name='call' size={35} color='#7a29ff' />
+                <MaterialIcons name='call' size={35} color={COLORS.primary} />
               </Pressable>
               <Pressable
                 style={styles.button}
@@ -70,7 +75,11 @@ const AdDetails = ({ navigation, route }) => {
                 }
               >
                 {/* Icon For Message */}
-                <Ionicons name='chatbox-ellipses' size={35} color='#7a29ff' />
+                <Ionicons
+                  name='chatbox-ellipses'
+                  size={35}
+                  color={COLORS.primary}
+                />
               </Pressable>
             </View>
           ) : (
@@ -90,7 +99,7 @@ const AdDetails = ({ navigation, route }) => {
                   onPress={() => navigation.navigate('EditAd', { ad })}
                   style={styles.button}
                 >
-                  <Ionicons name='pencil' size={30} color='#7a29ff' />
+                  <Ionicons name='pencil' size={30} color={COLORS.primary} />
                 </Pressable>
                 <Pressable
                   style={styles.button}
@@ -101,7 +110,7 @@ const AdDetails = ({ navigation, route }) => {
                     navigation.goBack();
                   }}
                 >
-                  <Ionicons name='trash' size={30} color='#7a29ff' />
+                  <Ionicons name='trash' size={30} color={COLORS.primary} />
                 </Pressable>
               </View>
             </>
@@ -175,7 +184,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 25,
-    color: 'green',
+    color: COLORS.random[9],
     marginTop: 10,
     fontWeight: 'bold',
   },
