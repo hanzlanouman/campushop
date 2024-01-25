@@ -14,9 +14,53 @@ import { useState } from 'react';
 import useStorage from './useStorage';
 import { auth } from '../config/firebase.config';
 import { set } from 'date-fns';
+import { startAfter, limit } from 'firebase/firestore';
 const useFirestore = () => {
   const { uploadAdImages } = useStorage();
   const [loading, setLoading] = useState(false);
+  const [lastDoc, setLastDoc] = useState(null);
+  const searchAds = async (searchTerm, newSearch = false) => {
+    setLoading(true);
+    const numResults = 20;
+    const adsRef = collection(firestore, 'ads');
+
+    let q;
+
+    if (searchTerm) {
+      // First orderBy 'title' because we're using it in an inequality filter
+      q = query(
+        adsRef,
+        orderBy('title'),
+        orderBy('createdAt', 'desc'),
+        where('title', '>=', searchTerm),
+        where('title', '<=', searchTerm + '\uf8ff'),
+        limit(numResults)
+      );
+    } else {
+      q = query(adsRef, orderBy('createdAt', 'desc'), limit(numResults));
+    }
+
+    if (!newSearch && lastDoc) {
+      q = query(q, startAfter(lastDoc));
+    }
+
+    try {
+      const querySnapshot = await getDocs(q);
+      const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+      setLastDoc(lastVisible);
+
+      const ads = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setLoading(false);
+      return ads;
+    } catch (error) {
+      console.error('Error searching ads:', error);
+      setLoading(false);
+      return [];
+    }
+  };
   const setUserProfile = async (userId, profileData) => {
     console.log('set user profile');
     console.log(profileData);
@@ -56,6 +100,22 @@ const useFirestore = () => {
     return querySnapshot.docs.length > 0 ? true : false;
   };
 
+  const getUsername = async (uid) => {
+    const userDocRef = doc(firestore, 'users', uid); // Reference to the user document
+    try {
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        return userDoc.data().username; // Return the username
+      } else {
+        console.warn(`No user found with uid: ${uid}`);
+        return 'Unknown User';
+      }
+    } catch (error) {
+      console.error(`Error fetching user with uid: ${uid}`, error);
+      return 'Unknown User';
+    }
+  };
+
   const userExsists = async (username) => {
     setLoading(true);
     const q = query(
@@ -71,9 +131,9 @@ const useFirestore = () => {
   const createNewAd = async (adData) => {
     setLoading(true);
     const images = await uploadAdImages(adData.images);
-
+    adData.images = images;
     const adRef = collection(firestore, 'ads');
-    await setDoc(doc(adRef), {
+    const newAd = await setDoc(doc(adRef), {
       ...adData,
       createdAt: new Date(), // Adding the current timestamp
       createdBy: auth.currentUser.uid,
@@ -138,6 +198,8 @@ const useFirestore = () => {
     getAllAds,
     getUserAds,
     deleteAd,
+    getUsername,
+    searchAds,
     getCategorizedAds,
 
     loading,

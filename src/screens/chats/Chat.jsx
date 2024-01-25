@@ -80,11 +80,20 @@ const Chat = ({ route }) => {
         style={{
           textAlign: 'center',
           fontSize: 20,
-          fontWeight: 'bold',
           marginTop: 50,
         }}
       >
-        {otherUser.username}
+        Conversation with{' '}
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginTop: 50,
+          }}
+        >
+          {otherUser.username}
+        </Text>
       </Text>
       <Text
         style={{

@@ -4,6 +4,7 @@ import AdDetails from '../screens/AdDetails';
 import Profile from '../screens/Profile';
 import CategoryNav from './CategoryNav';
 import Chat from '../screens/chats/Chat';
+import SearchAllAds from '../screens/SearchAllAds';
 const AdStack = createStackNavigator();
 const AdNav = () => {
   return (
@@ -22,6 +23,7 @@ const AdNav = () => {
           title: 'Back',
         }}
       />
+      <AdStack.Screen name='SearchAllAds' component={SearchAllAds} />
       <AdStack.Screen name='Profile' component={Profile} />
       <AdStack.Screen name='CategorizedAds' component={CategoryNav} />
       <AdStack.Screen name='Chat' component={Chat} />

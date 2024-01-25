@@ -12,6 +12,7 @@ import { Card, Title, Paragraph } from 'react-native-paper';
 import useFirestore from '../hooks/useFirestore'; // Import your useFirestore hook
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../Theme/colors';
+import AdCard from './AdCard';
 
 const MyAds = () => {
   const [userAds, setUserAds] = useState([]);
@@ -57,31 +58,12 @@ const MyAds = () => {
   );
 };
 
-const AdCard = ({ ad }) => {
-  const navigation = useNavigation();
-  return (
-    <Pressable
-      onPress={() => navigation.navigate('UserAdDetails', { ad })}
-      style={{ marginBottom: 10 }}
-    >
-      <Card style={styles.adCard}>
-        <Card.Cover source={{ uri: ad.images[0] }} />
-        <Card.Content>
-          <Title>{ad.title}</Title>
-          <Paragraph>{ad.description}</Paragraph>
-          <Paragraph style={styles.adPrice}>${ad.price}</Paragraph>
-        </Card.Content>
-        <Card.Actions></Card.Actions>
-      </Card>
-    </Pressable>
-  );
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 50,
     backgroundColor: '#fff',
+    paddingHorizontal: 10,
   },
   centered: {
     flex: 1,
@@ -91,12 +73,15 @@ const styles = StyleSheet.create({
   adsList: {
     marginTop: 10,
   },
+  adImage: {
+    borderRadius: 0,
+  },
   adCard: {
     // Styles for your AdCard component
     margin: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 10,
+    borderRadius: 0,
   },
   title: {
     fontSize: 18,

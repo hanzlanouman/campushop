@@ -4,18 +4,12 @@ import { Card, Title } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../Theme/colors';
 
-const CategoryCard = ({ category, icon, onPress }) => {
+const CategoryCard = ({ category, icon, onPress, color }) => {
   return (
     <Pressable onPress={onPress}>
       <View style={styles.card}>
         <View style={styles.cardImage}>
-          <Ionicons
-            name={icon}
-            size={40}
-            color={
-              COLORS.random[Math.floor(Math.random() * COLORS.random.length)]
-            }
-          />
+          <Ionicons name={icon} size={40} color={COLORS.random[color]} />
         </View>
       </View>
       <Title style={styles.cardTitleText}>{category}</Title>

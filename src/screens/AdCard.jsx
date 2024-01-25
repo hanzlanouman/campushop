@@ -1,22 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-} from 'react-native';
-import useAuth from '../hooks/useAuth';
-import { ActivityIndicator, Card, Searchbar } from 'react-native-paper';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Ionicons } from '@expo/vector-icons';
-import { Avatar, Title, Paragraph } from 'react-native-paper';
-import { FlatList } from 'react-native';
+// AdCard.jsx
+import React from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+import { Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import useFirestore from '../hooks/useFirestore';
-import { useCallback } from 'react';
-import CategoryPanel from './categories/CategoryPanel';
+import { COLORS } from '../Theme/colors';
 
 const AdCard = ({ ad }) => {
   const navigation = useNavigation();
@@ -26,15 +13,28 @@ const AdCard = ({ ad }) => {
       style={{ marginBottom: 10 }}
     >
       <Card style={styles.adCard}>
-        <Card.Cover source={{ uri: ad.images[0] }} />
+        <Card.Cover source={{ uri: ad.images[0] }} style={styles.adCardCover} />
         <Card.Content>
           <Title style={styles.adTitle} numberOfLines={1} ellipsizeMode='tail'>
             {ad.title}
           </Title>
-          <Paragraph>{ad.description}</Paragraph>
-          <Paragraph style={styles.adPrice}>${ad.price}</Paragraph>
+          {/* <Paragraph
+            style={styles.adDescription}
+            numberOfLines={2}
+            ellipsizeMode='tail'
+          >
+            {ad.description}
+          </Paragraph> */}
+          <Paragraph style={styles.adPrice}>Rs. {ad.price}</Paragraph>
+          <Paragraph style={styles.adLocation}>{ad.location}</Paragraph>
+          <Paragraph style={styles.adDate}>
+            {/* it  is a firebase date */}Posted on{' '}
+            {new Date(ad.createdAt?.toDate()).toDateString()}
+          </Paragraph>
         </Card.Content>
-        <Card.Actions></Card.Actions>
+        <Card.Actions>
+          {/* <Button title='View Details' onPress={() => {}} /> */}
+        </Card.Actions>
       </Card>
     </Pressable>
   );
@@ -52,16 +52,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 10,
   },
+  adCardCover: {
+    borderRadius: 0,
+  },
+  adLocation: {
+    // to the right most side
+    position: 'absolute',
+    right: 10,
+    bottom: 0,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+  },
   searchbar: {
     borderRadius: 50,
     flex: 1,
     marginRight: 10,
   },
   adCard: {
-    marginVertical: 10,
+    marginVertical: 3,
+    borderRadius: 0,
+    elevation: 0,
+    // borderWidth: 1,
   },
   adTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   adDescription: {
@@ -76,8 +91,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   adPrice: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    marginVertical: 10,
   },
   adsList: {
     flex: 1,

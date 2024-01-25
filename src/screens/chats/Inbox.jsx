@@ -10,9 +10,13 @@ import {
 import { auth, firestore } from '../../config/firebase.config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../../Theme/colors';
+import useFirestore from '../../hooks/useFirestore';
 
 const Inbox = ({ navigation }) => {
   const [conversations, setConversations] = useState([]);
+  const { getUsername } = useFirestore();
+  console.log(conversations);
 
   useEffect(() => {
     const currentUserUid = auth.currentUser.uid;
@@ -21,17 +25,26 @@ const Inbox = ({ navigation }) => {
       where('chatParticipants', 'array-contains', currentUserUid)
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
       const threads = {};
-      snapshot.docs.forEach((doc) => {
-        const messageData = doc.data();
-        const otherUserId = messageData.chatParticipants.find(
-          (id) => id !== currentUserUid
-        );
-        if (otherUserId && !threads[otherUserId]) {
-          threads[otherUserId] = { ...messageData, uid: otherUserId };
+      for (const doc of snapshot.docs) {
+        try {
+          const messageData = doc.data();
+          const otherUserId = messageData.chatParticipants.find(
+            (id) => id !== currentUserUid
+          );
+          if (otherUserId && !threads[otherUserId]) {
+            const username = await getUsername(otherUserId); // Fetch username
+            threads[otherUserId] = {
+              ...messageData,
+              uid: otherUserId,
+              username, // Add username to the conversation data
+            };
+          }
+        } catch (error) {
+          console.error('Error fetching username:', error);
         }
-      });
+      }
       setConversations(Object.values(threads));
     });
 
@@ -44,7 +57,14 @@ const Inbox = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 20 }}>
+      <Text
+        style={{
+          fontSize: 30,
+          fontWeight: 'bold',
+          marginBottom: 20,
+          color: COLORS.primary,
+        }}
+      >
         Inbox
       </Text>
       <FlatList
@@ -56,16 +76,13 @@ const Inbox = ({ navigation }) => {
               onPress={() => openChat(item.uid)}
               style={styles.itemContainer}
             >
-              <Ionicons name='mail' size={50} color='#7a29ff' />
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  marginLeft: 10,
-                }}
-              >
-                {item.text || 'Start a conversation'}
-              </Text>
+              <Ionicons name='mail' size={40} color={COLORS.primary} />
+              <View style={{ marginLeft: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                  {item.username || 'Unknown User'}
+                </Text>
+                <Text>{item.text || 'Start a conversation'}</Text>
+              </View>
             </TouchableOpacity>
           </View>
         )}
@@ -82,7 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 10,
-    marginTop: 50,
+    paddingTop: 50,
   },
   item: {
     marginVertical: 10,

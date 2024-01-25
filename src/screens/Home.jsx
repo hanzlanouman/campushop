@@ -11,7 +11,7 @@ import {
 import useAuth from '../hooks/useAuth';
 import { ActivityIndicator, Card, Searchbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Avatar, Title, Paragraph } from 'react-native-paper';
 import { FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +19,8 @@ import useFirestore from '../hooks/useFirestore';
 import { useCallback } from 'react';
 import CategoryPanel from './categories/CategoryPanel';
 import { COLORS } from '../Theme/colors';
+import CustomSearchBar from '../components/CustomSearchBar';
+import AdCard from './AdCard';
 
 const Home = () => {
   const [ads, setAds] = useState([]);
@@ -43,18 +45,22 @@ const Home = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
+  // const handleSearch = (query) => {
+  //   setSearchQuery(query);
 
-    if (!query) {
-      fetchAds();
-    } else {
-      const filteredAds = ads.filter((ad) =>
-        ad.title.toLowerCase().includes(query.toLowerCase())
-      );
+  //   if (!query) {
+  //     fetchAds();
+  //   } else {
+  //     const filteredAds = ads.filter((ad) =>
+  //       ad.title.toLowerCase().includes(query.toLowerCase())
+  //     );
 
-      setAds(filteredAds);
-    }
+  //     setAds(filteredAds);
+  //   }
+  // };
+
+  const handleSearch = (searchQuery) => {
+    navigation.navigate('SearchAllAds', { searchTerm: searchQuery });
   };
 
   if (loading) {
@@ -69,16 +75,8 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Searchbar
-          placeholder='Search Ads'
-          style={styles.searchbar}
-          icon={() => (
-            <Ionicons name='ios-search' size={25} color={COLORS.secondary} />
-          )}
-          value={searchQuery}
-          onChangeText={handleSearch}
-          // set close icon visible only when search query is not empty
-        />
+        <CustomSearchBar onSearch={handleSearch} />
+
         <Pressable onPress={() => navigation.navigate('Profile')}>
           <Avatar.Image
             size={50}
@@ -112,36 +110,6 @@ const Home = () => {
   );
 };
 
-const AdCard = ({ ad }) => {
-  const navigation = useNavigation();
-  return (
-    <Pressable
-      onPress={() => navigation.navigate('AdDetails', { ad })}
-      style={{ marginBottom: 10 }}
-    >
-      <Card style={styles.adCard}>
-        <Card.Cover source={{ uri: ad.images[0] }} style={styles.adCardCover} />
-        <Card.Content>
-          <Title style={styles.adTitle} numberOfLines={1} ellipsizeMode='tail'>
-            {ad.title}
-          </Title>
-          <Paragraph
-            style={styles.adDescription}
-            numberOfLines={2}
-            ellipsizeMode='tail'
-          >
-            {ad.description}
-          </Paragraph>
-          <Paragraph style={styles.adPrice}>Rs. {ad.price}</Paragraph>
-        </Card.Content>
-        <Card.Actions>
-          {/* <Button title='View Details' onPress={() => {}} /> */}
-        </Card.Actions>
-      </Card>
-    </Pressable>
-  );
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -156,6 +124,15 @@ const styles = StyleSheet.create({
   },
   adCardCover: {
     borderRadius: 0,
+  },
+  adLocation: {
+    // to the right most side
+    position: 'absolute',
+    right: 10,
+    bottom: 0,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   searchbar: {
     borderRadius: 50,
@@ -184,8 +161,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   adPrice: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    marginVertical: 10,
   },
   adsList: {
     flex: 1,

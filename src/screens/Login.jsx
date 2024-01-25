@@ -13,7 +13,9 @@ import { ActivityIndicator, RadioButton } from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '../hooks/useAuth';
+import { Svg } from 'react-native-svg';
 import { COLORS } from '../Theme/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -114,7 +116,9 @@ const Login = () => {
           </TouchableOpacity>
           <Text style={styles.orText}>OR</Text>
           <TouchableOpacity style={styles.googleSignInButton}>
+            <Ionicons name='logo-google' size={24} color={'red'} />
             <Text style={styles.googleSignInText}>
+              {'  '}
               Sign in with
               <Text> Google</Text>
             </Text>

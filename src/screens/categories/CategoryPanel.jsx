@@ -62,6 +62,7 @@ const CategoryPanel = () => {
         renderItem={({ item }) => (
           <CategoryCard
             key={item.id}
+            color={item.id}
             category={item.title}
             icon={item.icon}
             onPress={() => handlePress(item.name)}

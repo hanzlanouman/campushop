@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Pressable,
+  Alert,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
@@ -17,9 +18,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../config/firebase.config';
 import { ActivityIndicator } from 'react-native-paper';
 import { COLORS } from '../Theme/colors';
+import { useNavigation } from '@react-navigation/native';
 
 const NewAdForm = () => {
   const { createNewAd, loading } = useFirestore();
+  const navigation = useNavigation();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -91,7 +94,11 @@ const NewAdForm = () => {
     if (validateForm()) {
       console.log('Form Data:', formData);
       console.log(formData);
-      createNewAd(formData);
+      const result = createNewAd(formData);
+      if (result) {
+        Alert.alert('Ad created successfully');
+        navigation.navigate('Home');
+      }
       // Proceed with form submission logic
     }
   };
@@ -184,6 +191,7 @@ const NewAdForm = () => {
             <Image source={{ uri: image }} style={styles.imagePreview} />
             <Button
               title='Remove'
+              color={COLORS.secondary}
               onPress={() =>
                 setFormData({
                   ...formData,
@@ -206,7 +214,7 @@ const NewAdForm = () => {
       {/* Submit Button */}
       <Pressable style={styles.button} onPress={handleSubmit}>
         {loading ? (
-          <ActivityIndicator size='large' color='white' />
+          <ActivityIndicator size={24} color='white' />
         ) : (
           <Text style={styles.buttonText}>Submit</Text>
         )}
@@ -226,6 +234,8 @@ const FormInput = ({ label, error, ...props }) => (
       style={[styles.input, error && styles.errorInput]}
       {...props}
       label={label}
+      // make it numeric if label is price
+      keyboardType={label === 'Price' ? 'numeric' : 'default'}
       selectionColor={COLORS.primary}
       cursorColor={COLORS.primary}
       outlineColor={COLORS.primary}
